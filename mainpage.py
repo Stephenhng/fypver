@@ -497,6 +497,46 @@ class parentApp(App):
         screen_manager.get_screen('register').passwd.text = ""
         screen_manager.get_screen('register').confirm_passwd.text = ""
 
+    def history(self):
+        mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            passwd="990331@Hngsw",
+            database="second_db",
+
+        )
+
+        c = mydb.cursor()
+
+        app = App.get_running_app()
+        user_details = app.user_details
+
+        label = Label(text="Email",size_hint=(.65, None), color=(0, 0, 1, 1))
+        label2 = Label(text="Email", size_hint=(.65, None), color=(0, 0, 1, 1))
+        screen_manager.get_screen('history').history_list.add_widget(label)
+        screen_manager.get_screen('history').history_list.add_widget(label2)
+
+        # sql = (f"SELECT * FROM results WHERE email = '{user_details['email']}")
+        # c.execute(sql)
+        # result = c.fetchall()
+        # print(result)
+        #
+        # if sql == "":
+        #     layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+        #     popupLabel = Label(text="You have no done prediction yet")
+        #     closeButton = Button(text="Close to continue")
+        #     layout.add_widget(popupLabel)
+        #     layout.add_widget(closeButton)
+        #     popup = Popup(title='Error', content=layout)
+        #     popup.open()
+        #     closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_main)
+        # else:
+        #     pass
+
+        mydb.commit()
+
+        mydb.close()
+
     def profile(self):
 
         app = App.get_running_app()
@@ -798,6 +838,7 @@ class parentApp(App):
                 sql = """INSERT INTO results (email, symptom, disease, score) VALUES (%s, %s, %s, %s)"""
                 record = (user_details['email'], message, str(predstr), str(rfc_result*100))
                 c.execute(sql, record)
+
 
             except Exception as e:
                 symptom_list = ["itching", "skin rash", "nodal skin eruptions", "continuous sneezing", "shivering",

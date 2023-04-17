@@ -7,14 +7,17 @@ Screen:
         cols:1
         size: root.width, root.height
 
-        GridLayout:
-            cols:1
-            size_hint: .8, .8
+        FloatLayout:
+            size_hint: .8, .2
+            canvas:
+                Color:
+                    rgb: (255/255,192/255,203/255,1)
 
             Label:
                 id: history
                 text:"History"
-                size_hint: .8, .1
+                size_hint: 1, .1
+                pos_hint: {"center_x":.5, "center_y": .97}
                 background_color: (255/255,192/255,203/255,1)
                 canvas.before:
                     Color:
@@ -24,6 +27,7 @@ Screen:
                         pos: self.pos
                 color: 0,0,0,1
                 bold: True
+
 
             GridLayout:
                 cols:1
@@ -38,69 +42,68 @@ Screen:
                         always_overscroll: True
 
                         GridLayout:
-                            cols:2
+                            cols: 2
                             id: history_list
                             size: (root.width, root.height)
                             height: self.minimum_height
                             size_hint: None, None
                             pos_hint: {'top': 10}
-                            cols: 1
                             spacing: 8
 
-            GridLayout:
-                cols:4
-                size_hint: .8, .1
-                Button:
-                    on_release:
-                        app.root.current = "content"
-                        root.manager.transition.direction = "right"
-                    Image:
-                        source:"home.png"
-                        size: self.size
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
-                        x: self.parent.x
-                        width: self.parent.width
+                GridLayout:
+                    cols:4
+                    size_hint: .8, .1
+                    Button:
+                        on_release:
+                            app.root.current = "content"
+                            root.manager.transition.direction = "right"
+                        Image:
+                            source:"home.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
 
 
-                Button:
-                    on_release:
-                        app.root.current = "history"
-                        root.manager.transition.direction = "left"
-                        app.history()
-                    Image:
-                        source:"document.png"
-                        size: self.size
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
-                        x: self.parent.x
-                        width: self.parent.width
+                    Button:
+                        on_release:
+                            app.root.current = "history"
+                            root.manager.transition.direction = "left"
+                            app.history()
+                        Image:
+                            source:"document.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
 
-                Button:
-                    on_release:
-                        app.root.current = "profile"
-                        root.manager.transition.direction = "left"
-                        app.profile()
-                    Image:
-                        source:"person.png"
-                        size: self.size
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
-                        x: self.parent.x
-                        width: self.parent.width
+                    Button:
+                        on_release:
+                            app.root.current = "profile"
+                            root.manager.transition.direction = "left"
+                            app.profile()
+                        Image:
+                            source:"person.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
 
-                Button:
-                    on_release:
-                        app.root.current = "setting"
-                        root.manager.transition.direction = "left"
-                    Image:
-                        source:"settings.png"
-                        size: self.size
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
-                        x: self.parent.x
-                        width: self.parent.width
+                    Button:
+                        on_release:
+                            app.root.current = "setting"
+                            root.manager.transition.direction = "left"
+                        Image:
+                            source:"settings.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
