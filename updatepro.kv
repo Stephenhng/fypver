@@ -1,0 +1,188 @@
+Screen:
+    name: "updatepro"
+    username: username
+    age: age
+    body_weight: body_weight
+    body_height: body_height
+    gender: gender
+    email: email
+    phone: phone
+
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:1
+
+            Label:
+                text:"Edit/Update Details"
+                size_hint: .8, .1
+                background_color: (255/255,192/255,203/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+            GridLayout:
+                cols:2
+
+                Label:
+                    text:"Name"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: username
+                    hint_text: 'Enter Username'
+                    size_hint: .8, .2
+                    multiline:False
+                    write_tab:False
+                    on_text_validate: BS.focus = True
+
+                Label:
+                    text:"Age"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: age
+                    hint_text: 'Enter Age'
+                    size_hint: .8, .2
+                    multiline:False
+
+                Label:
+                    text:"Body Weight(kg)"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: body_weight
+                    hint_text: 'Enter Body Weight'
+                    size_hint: .8, .2
+                    multiline:False
+
+                Label:
+                    text:"Body Height(cm)"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: body_height
+                    hint_text: 'Enter Body Height'
+                    size_hint: .8, .2
+                    multiline:False
+
+                Label:
+                    text:"Gender(Male/Female)"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: gender
+                    hint_text: 'Enter gender'
+                    size_hint: .8, .2
+                    multiline:False
+
+
+                Label:
+                    text:"Email"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: email
+                    text:"Email was not able to change"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 1,0,0,1
+
+
+                Label:
+                    text:"Phone Number"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: phone
+                    hint_text: 'Enter Phone Number'
+                    size_hint: .8, .2
+                    multiline:False
+
+
+            Button:
+                size_hint: .8,.1
+                text: "Save/Update"
+                on_release:
+                    app.update_profile()
+
+            Button:
+                size_hint: .8,.1
+                text: "Go Back"
+                on_release:
+                    app.root.current = "profile"
+                    root.manager.transition.direction = "right"
+                    app.profile()
+

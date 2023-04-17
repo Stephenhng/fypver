@@ -1,0 +1,86 @@
+Screen:
+    name: "main"
+    email: email
+    passwd: passwd
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+        Image:
+            source: "chatbot2.png"
+
+        GridLayout:
+            size_hint: .8, .5
+            cols:2
+            Label:
+                text: "Email: "
+                background_color: (211/255,211/255,211/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+            TextInput:
+                id: email
+                multiline: False
+                hint_text:'Enter Email'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.705}
+                size_hint: .8, .2
+
+            Label:
+                text: "Password: "
+                background_color: (211/255,211/255,211/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+            TextInput:
+                id: passwd
+                multiline: False
+                hint_text:'Enter Password'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.705}
+                size_hint: .8, .2
+
+        Button:
+            size_hint: .8, .2
+            text:"Register"
+            on_release:
+                app.root.current = "register"
+                root.manager.transition.direction = "left"
+
+        Button:
+            size_hint: .8, .2
+            text:"Login"
+            on_release:
+                app.log_in()
+
+        GridLayout:
+            cols:1
+            size_hint: .9, .2
+            Button:
+                text: "Forget Password?"
+                halign: "center"
+                color: "#2200CC"
+                background_color: 0, 0, 0, 0
+                on_release: app.forget_pass()
+
+        FloatLayout:
+            Button:
+                background_normal: 'google.png'
+                size_hint: None, None
+                pos_hint: {"center_x":.50, "center_y": .5}
+                on_release: app.google_login()
+
+        GridLayout:
+            cols:1
+            size_hint: .8, .5
+

@@ -1,0 +1,742 @@
+{
+  "precaution_intents": [
+    {
+      "tag": "precaution_Drug_Reaction",
+      "patterns": [
+        "medicine for Drug Reaction",
+        "Recover of Drug Reaction",
+        "treatment for Drug Reaction",
+        "I am getting Drug Reaction",
+        "what is the precaution for Drug Reaction",
+        "how to avoid Drug Reaction",
+        "how to prevent Drug Reaction"
+      ],
+      "responses": [
+        "stop irritation",
+        "consult nearest hospital",
+        "stop taking drug",
+        "follow up"
+      ]
+    },
+    {
+      "tag": "precaution_Malaria",
+      "patterns": [
+        "medicine for Malaria",
+        "Recover of Malaria",
+        "treatment for Malaria",
+        "I am getting Malaria",
+        "what is the precaution for Malaria",
+        "how to avoid Malaria",
+        "how to prevent Malaria"
+      ],
+      "responses": [
+        "Consult nearest hospital",
+        "avoid oily food",
+        "avoid non veg food",
+        "keep mosquitos out"
+      ]
+    },
+    {
+      "tag": "precaution_Allergy",
+      "patterns": [
+        "medicine for Allergy",
+        "Recover of Allergy",
+        "treatment for Allergy",
+        "I am getting Allergy",
+        "what is the precaution for Allergy",
+        "how to avoid Allergy",
+        "how to prevent Allergy"
+      ],
+      "responses": [
+        "apply calamine",
+        "cover area with bandage",
+        "",
+        "use ice to compress itching"
+      ]
+    },
+    {
+      "tag": "precaution_Hypothyroidism",
+      "patterns": [
+        "medicine for Hypothyroidism",
+        "Recover of Hypothyroidism",
+        "treatment for Hypothyroidism",
+        "I am getting Hypothyroidism",
+        "what is the precaution for Hypothyroidism",
+        "how to avoid Hypothyroidism",
+        "how to prevent Hypothyroidism"
+      ],
+      "responses": [
+        "reduce stress",
+        "exercise",
+        "eat healthy",
+        "get proper sleep"
+      ]
+    },
+    {
+      "tag": "precaution_Psoriasis",
+      "patterns": [
+        "medicine for Psoriasis",
+        "Recover of Psoriasis",
+        "treatment for Psoriasis",
+        "I am getting Psoriasis",
+        "what is the precaution for Psoriasis",
+        "how to avoid Psoriasis",
+        "how to prevent Psoriasis"
+      ],
+      "responses": [
+        "wash hands with warm soapy water",
+        "stop bleeding using pressure",
+        "consult doctor",
+        "salt baths"
+      ]
+    },
+    {
+      "tag": "precaution_GERD",
+      "patterns": [
+        "medicine for GERD",
+        "Recover of GERD",
+        "treatment for GERD",
+        "I am getting GERD",
+        "what is the precaution for GERD",
+        "how to avoid GERD",
+        "how to prevent GERD"
+      ],
+      "responses": [
+        "avoid fatty spicy food",
+        "avoid lying down after eating",
+        "maintain healthy weight",
+        "exercise"
+      ]
+    },
+    {
+      "tag": "precaution_Chronic_cholestasis",
+      "patterns": [
+        "medicine for Chronic cholestasis",
+        "Recover of Chronic cholestasis",
+        "treatment for Chronic cholestasis",
+        "I am getting Chronic cholestasis",
+        "what is the precaution for Chronic cholestasis",
+        "how to avoid Chronic cholestasis",
+        "how to prevent Chronic cholestasis"
+      ],
+      "responses": [
+        "cold baths",
+        "anti itch medicine",
+        "consult doctor",
+        "eat healthy"
+      ]
+    },
+    {
+      "tag": "precaution_hepatitis_A",
+      "patterns": [
+        "medicine for hepatitis A",
+        "Recover of hepatitis A",
+        "treatment for hepatitis A",
+        "I am getting hepatitis A",
+        "what is the precaution for hepatitis A",
+        "how to avoid hepatitis A",
+        "how to prevent hepatitis A"
+      ],
+      "responses": [
+        "Consult nearest hospital",
+        "wash hands through",
+        "avoid fatty spicy food",
+        "medication"
+      ]
+    },
+    {
+      "tag": "precaution_Osteoarthristis",
+      "patterns": [
+        "medicine for Osteoarthristis",
+        "Recover of Osteoarthristis",
+        "treatment for Osteoarthristis",
+        "I am getting Osteoarthristis",
+        "what is the precaution for Osteoarthristis",
+        "how to avoid Osteoarthristis",
+        "how to prevent Osteoarthristis"
+      ],
+      "responses": [
+        "acetaminophen",
+        "consult nearest hospital",
+        "follow up",
+        "salt baths"
+      ]
+    },
+    {
+      "tag": "precaution_(vertigo)_Paroymsal__Positional_Vertigo",
+      "patterns": [
+        "medicine for (vertigo) Paroymsal  Positional Vertigo",
+        "Recover of (vertigo) Paroymsal  Positional Vertigo",
+        "treatment for (vertigo) Paroymsal  Positional Vertigo",
+        "I am getting (vertigo) Paroymsal  Positional Vertigo",
+        "what is the precaution for (vertigo) Paroymsal  Positional Vertigo",
+        "how to avoid (vertigo) Paroymsal  Positional Vertigo",
+        "how to prevent (vertigo) Paroymsal  Positional Vertigo"
+      ],
+      "responses": [
+        "lie down",
+        "avoid sudden change in body",
+        "avoid abrupt head movment",
+        "relax"
+      ]
+    },
+    {
+      "tag": "precaution_Hypoglycemia",
+      "patterns": [
+        "medicine for Hypoglycemia",
+        "Recover of Hypoglycemia",
+        "treatment for Hypoglycemia",
+        "I am getting Hypoglycemia",
+        "what is the precaution for Hypoglycemia",
+        "how to avoid Hypoglycemia",
+        "how to prevent Hypoglycemia"
+      ],
+      "responses": [
+        "lie down on side",
+        "check in pulse",
+        "drink sugary drinks",
+        "consult doctor"
+      ]
+    },
+    {
+      "tag": "precaution_Acne",
+      "patterns": [
+        "medicine for Acne",
+        "Recover of Acne",
+        "treatment for Acne",
+        "I am getting Acne",
+        "what is the precaution for Acne",
+        "how to avoid Acne",
+        "how to prevent Acne"
+      ],
+      "responses": [
+        "bath twice",
+        "avoid fatty spicy food",
+        "drink plenty of water",
+        "avoid too many products"
+      ]
+    },
+    {
+      "tag": "precaution_Diabetes_",
+      "patterns": [
+        "medicine for Diabetes ",
+        "Recover of Diabetes ",
+        "treatment for Diabetes ",
+        "I am getting Diabetes ",
+        "what is the precaution for Diabetes ",
+        "how to avoid Diabetes ",
+        "how to prevent Diabetes "
+      ],
+      "responses": [
+        "have balanced diet",
+        "exercise",
+        "consult doctor",
+        "follow up"
+      ]
+    },
+    {
+      "tag": "precaution_Impetigo",
+      "patterns": [
+        "medicine for Impetigo",
+        "Recover of Impetigo",
+        "treatment for Impetigo",
+        "I am getting Impetigo",
+        "what is the precaution for Impetigo",
+        "how to avoid Impetigo",
+        "how to prevent Impetigo"
+      ],
+      "responses": [
+        "soak affected area in warm water",
+        "use antibiotics",
+        "remove scabs with wet compressed cloth",
+        "consult doctor"
+      ]
+    },
+    {
+      "tag": "precaution_Hypertension_",
+      "patterns": [
+        "medicine for Hypertension ",
+        "Recover of Hypertension ",
+        "treatment for Hypertension ",
+        "I am getting Hypertension ",
+        "what is the precaution for Hypertension ",
+        "how to avoid Hypertension ",
+        "how to prevent Hypertension "
+      ],
+      "responses": [
+        "meditation",
+        "salt baths",
+        "reduce stress",
+        "get proper sleep"
+      ]
+    },
+    {
+      "tag": "precaution_Peptic_ulcer_diseae",
+      "patterns": [
+        "medicine for Peptic ulcer diseae",
+        "Recover of Peptic ulcer diseae",
+        "treatment for Peptic ulcer diseae",
+        "I am getting Peptic ulcer diseae",
+        "what is the precaution for Peptic ulcer diseae",
+        "how to avoid Peptic ulcer diseae",
+        "how to prevent Peptic ulcer diseae"
+      ],
+      "responses": [
+        "avoid fatty spicy food",
+        "consume probiotic food",
+        "eliminate milk",
+        "limit alcohol"
+      ]
+    },
+    {
+      "tag": "precaution_Dimorphic_hemmorhoids(piles)",
+      "patterns": [
+        "medicine for Dimorphic hemmorhoids(piles)",
+        "Recover of Dimorphic hemmorhoids(piles)",
+        "treatment for Dimorphic hemmorhoids(piles)",
+        "I am getting Dimorphic hemmorhoids(piles)",
+        "what is the precaution for Dimorphic hemmorhoids(piles)",
+        "how to avoid Dimorphic hemmorhoids(piles)",
+        "how to prevent Dimorphic hemmorhoids(piles)"
+      ],
+      "responses": [
+        "avoid fatty spicy food",
+        "consume witch hazel",
+        "warm bath with epsom salt",
+        "consume alovera juice"
+      ]
+    },
+    {
+      "tag": "precaution_Common_Cold",
+      "patterns": [
+        "medicine for Common Cold",
+        "Recover of Common Cold",
+        "treatment for Common Cold",
+        "I am getting Common Cold",
+        "what is the precaution for Common Cold",
+        "how to avoid Common Cold",
+        "how to prevent Common Cold"
+      ],
+      "responses": [
+        "drink vitamin c rich drinks",
+        "take vapour",
+        "avoid cold food",
+        "keep fever in check"
+      ]
+    },
+    {
+      "tag": "precaution_Chicken_pox",
+      "patterns": [
+        "medicine for Chicken pox",
+        "Recover of Chicken pox",
+        "treatment for Chicken pox",
+        "I am getting Chicken pox",
+        "what is the precaution for Chicken pox",
+        "how to avoid Chicken pox",
+        "how to prevent Chicken pox"
+      ],
+      "responses": [
+        "use neem in bathing ",
+        "consume neem leaves",
+        "take vaccine",
+        "avoid public places"
+      ]
+    },
+    {
+      "tag": "precaution_Cervical_spondylosis",
+      "patterns": [
+        "medicine for Cervical spondylosis",
+        "Recover of Cervical spondylosis",
+        "treatment for Cervical spondylosis",
+        "I am getting Cervical spondylosis",
+        "what is the precaution for Cervical spondylosis",
+        "how to avoid Cervical spondylosis",
+        "how to prevent Cervical spondylosis"
+      ],
+      "responses": [
+        "use heating pad or cold pack",
+        "exercise",
+        "take otc pain reliver",
+        "consult doctor"
+      ]
+    },
+    {
+      "tag": "precaution_Hyperthyroidism",
+      "patterns": [
+        "medicine for Hyperthyroidism",
+        "Recover of Hyperthyroidism",
+        "treatment for Hyperthyroidism",
+        "I am getting Hyperthyroidism",
+        "what is the precaution for Hyperthyroidism",
+        "how to avoid Hyperthyroidism",
+        "how to prevent Hyperthyroidism"
+      ],
+      "responses": [
+        "eat healthy",
+        "massage",
+        "use lemon balm",
+        "take radioactive iodine treatment"
+      ]
+    },
+    {
+      "tag": "precaution_Urinary_tract_infection",
+      "patterns": [
+        "medicine for Urinary tract infection",
+        "Recover of Urinary tract infection",
+        "treatment for Urinary tract infection",
+        "I am getting Urinary tract infection",
+        "what is the precaution for Urinary tract infection",
+        "how to avoid Urinary tract infection",
+        "how to prevent Urinary tract infection"
+      ],
+      "responses": [
+        "drink plenty of water",
+        "increase vitamin c intake",
+        "drink cranberry juice",
+        "take probiotics"
+      ]
+    },
+    {
+      "tag": "precaution_Varicose_veins",
+      "patterns": [
+        "medicine for Varicose veins",
+        "Recover of Varicose veins",
+        "treatment for Varicose veins",
+        "I am getting Varicose veins",
+        "what is the precaution for Varicose veins",
+        "how to avoid Varicose veins",
+        "how to prevent Varicose veins"
+      ],
+      "responses": [
+        "lie down flat and raise the leg high",
+        "use oinments",
+        "use vein compression",
+        "dont stand still for long"
+      ]
+    },
+    {
+      "tag": "precaution_AIDS",
+      "patterns": [
+        "medicine for AIDS",
+        "Recover of AIDS",
+        "treatment for AIDS",
+        "I am getting AIDS",
+        "what is the precaution for AIDS",
+        "how to avoid AIDS",
+        "how to prevent AIDS"
+      ],
+      "responses": [
+        "avoid open cuts",
+        "wear ppe if possible",
+        "consult doctor",
+        "follow up"
+      ]
+    },
+    {
+      "tag": "precaution_Paralysis_(brain_hemorrhage)",
+      "patterns": [
+        "medicine for Paralysis (brain hemorrhage)",
+        "Recover of Paralysis (brain hemorrhage)",
+        "treatment for Paralysis (brain hemorrhage)",
+        "I am getting Paralysis (brain hemorrhage)",
+        "what is the precaution for Paralysis (brain hemorrhage)",
+        "how to avoid Paralysis (brain hemorrhage)",
+        "how to prevent Paralysis (brain hemorrhage)"
+      ],
+      "responses": [
+        "massage",
+        "eat healthy",
+        "exercise",
+        "consult doctor"
+      ]
+    },
+    {
+      "tag": "precaution_Typhoid",
+      "patterns": [
+        "medicine for Typhoid",
+        "Recover of Typhoid",
+        "treatment for Typhoid",
+        "I am getting Typhoid",
+        "what is the precaution for Typhoid",
+        "how to avoid Typhoid",
+        "how to prevent Typhoid"
+      ],
+      "responses": [
+        "eat high calorie vegitables",
+        "antiboitic therapy",
+        "consult doctor",
+        "medication"
+      ]
+    },
+    {
+      "tag": "precaution_Hepatitis_B",
+      "patterns": [
+        "medicine for Hepatitis B",
+        "Recover of Hepatitis B",
+        "treatment for Hepatitis B",
+        "I am getting Hepatitis B",
+        "what is the precaution for Hepatitis B",
+        "how to avoid Hepatitis B",
+        "how to prevent Hepatitis B"
+      ],
+      "responses": [
+        "consult nearest hospital",
+        "vaccination",
+        "eat healthy",
+        "medication"
+      ]
+    },
+    {
+      "tag": "precaution_Fungal_infection",
+      "patterns": [
+        "medicine for Fungal infection",
+        "Recover of Fungal infection",
+        "treatment for Fungal infection",
+        "I am getting Fungal infection",
+        "what is the precaution for Fungal infection",
+        "how to avoid Fungal infection",
+        "how to prevent Fungal infection"
+      ],
+      "responses": [
+        "bath twice",
+        "use detol or neem in bathing water",
+        "keep infected area dry",
+        "use clean cloths"
+      ]
+    },
+    {
+      "tag": "precaution_Hepatitis_C",
+      "patterns": [
+        "medicine for Hepatitis C",
+        "Recover of Hepatitis C",
+        "treatment for Hepatitis C",
+        "I am getting Hepatitis C",
+        "what is the precaution for Hepatitis C",
+        "how to avoid Hepatitis C",
+        "how to prevent Hepatitis C"
+      ],
+      "responses": [
+        "Consult nearest hospital",
+        "vaccination",
+        "eat healthy",
+        "medication"
+      ]
+    },
+    {
+      "tag": "precaution_Migraine",
+      "patterns": [
+        "medicine for Migraine",
+        "Recover of Migraine",
+        "treatment for Migraine",
+        "I am getting Migraine",
+        "what is the precaution for Migraine",
+        "how to avoid Migraine",
+        "how to prevent Migraine"
+      ],
+      "responses": [
+        "meditation",
+        "reduce stress",
+        "use poloroid glasses in sun",
+        "consult doctor"
+      ]
+    },
+    {
+      "tag": "precaution_Bronchial_Asthma",
+      "patterns": [
+        "medicine for Bronchial Asthma",
+        "Recover of Bronchial Asthma",
+        "treatment for Bronchial Asthma",
+        "I am getting Bronchial Asthma",
+        "what is the precaution for Bronchial Asthma",
+        "how to avoid Bronchial Asthma",
+        "how to prevent Bronchial Asthma"
+      ],
+      "responses": [
+        "switch to loose cloothing",
+        "take deep breaths",
+        "get away from trigger",
+        "seek help"
+      ]
+    },
+    {
+      "tag": "precaution_Alcoholic_hepatitis",
+      "patterns": [
+        "medicine for Alcoholic hepatitis",
+        "Recover of Alcoholic hepatitis",
+        "treatment for Alcoholic hepatitis",
+        "I am getting Alcoholic hepatitis",
+        "what is the precaution for Alcoholic hepatitis",
+        "how to avoid Alcoholic hepatitis",
+        "how to prevent Alcoholic hepatitis"
+      ],
+      "responses": [
+        "stop alcohol consumption",
+        "consult doctor",
+        "medication",
+        "follow up"
+      ]
+    },
+    {
+      "tag": "precaution_Jaundice",
+      "patterns": [
+        "medicine for Jaundice",
+        "Recover of Jaundice",
+        "treatment for Jaundice",
+        "I am getting Jaundice",
+        "what is the precaution for Jaundice",
+        "how to avoid Jaundice",
+        "how to prevent Jaundice"
+      ],
+      "responses": [
+        "drink plenty of water",
+        "consume milk thistle",
+        "eat fruits and high fiberous food",
+        "medication"
+      ]
+    },
+    {
+      "tag": "precaution_Hepatitis_E",
+      "patterns": [
+        "medicine for Hepatitis E",
+        "Recover of Hepatitis E",
+        "treatment for Hepatitis E",
+        "I am getting Hepatitis E",
+        "what is the precaution for Hepatitis E",
+        "how to avoid Hepatitis E",
+        "how to prevent Hepatitis E"
+      ],
+      "responses": [
+        "stop alcohol consumption",
+        "rest",
+        "consult doctor",
+        "medication"
+      ]
+    },
+    {
+      "tag": "precaution_Dengue",
+      "patterns": [
+        "medicine for Dengue",
+        "Recover of Dengue",
+        "treatment for Dengue",
+        "I am getting Dengue",
+        "what is the precaution for Dengue",
+        "how to avoid Dengue",
+        "how to prevent Dengue"
+      ],
+      "responses": [
+        "drink papaya leaf juice",
+        "avoid fatty spicy food",
+        "keep mosquitos away",
+        "keep hydrated"
+      ]
+    },
+    {
+      "tag": "precaution_Hepatitis_D",
+      "patterns": [
+        "medicine for Hepatitis D",
+        "Recover of Hepatitis D",
+        "treatment for Hepatitis D",
+        "I am getting Hepatitis D",
+        "what is the precaution for Hepatitis D",
+        "how to avoid Hepatitis D",
+        "how to prevent Hepatitis D"
+      ],
+      "responses": [
+        "consult doctor",
+        "medication",
+        "eat healthy",
+        "follow up"
+      ]
+    },
+    {
+      "tag": "precaution_Heart_attack",
+      "patterns": [
+        "medicine for Heart attack",
+        "Recover of Heart attack",
+        "treatment for Heart attack",
+        "I am getting Heart attack",
+        "what is the precaution for Heart attack",
+        "how to avoid Heart attack",
+        "how to prevent Heart attack"
+      ],
+      "responses": [
+        "call ambulance",
+        "chew or swallow asprin",
+        "keep calm",
+        ""
+      ]
+    },
+    {
+      "tag": "precaution_Pneumonia",
+      "patterns": [
+        "medicine for Pneumonia",
+        "Recover of Pneumonia",
+        "treatment for Pneumonia",
+        "I am getting Pneumonia",
+        "what is the precaution for Pneumonia",
+        "how to avoid Pneumonia",
+        "how to prevent Pneumonia"
+      ],
+      "responses": [
+        "consult doctor",
+        "medication",
+        "rest",
+        "follow up"
+      ]
+    },
+    {
+      "tag": "precaution_Arthritis",
+      "patterns": [
+        "medicine for Arthritis",
+        "Recover of Arthritis",
+        "treatment for Arthritis",
+        "I am getting Arthritis",
+        "what is the precaution for Arthritis",
+        "how to avoid Arthritis",
+        "how to prevent Arthritis"
+      ],
+      "responses": [
+        "exercise",
+        "use hot and cold therapy",
+        "try acupuncture",
+        "massage"
+      ]
+    },
+    {
+      "tag": "precaution_Gastroenteritis",
+      "patterns": [
+        "medicine for Gastroenteritis",
+        "Recover of Gastroenteritis",
+        "treatment for Gastroenteritis",
+        "I am getting Gastroenteritis",
+        "what is the precaution for Gastroenteritis",
+        "how to avoid Gastroenteritis",
+        "how to prevent Gastroenteritis"
+      ],
+      "responses": [
+        "stop eating solid food for while",
+        "try taking small sips of water",
+        "rest",
+        "ease back into eating"
+      ]
+    },
+    {
+      "tag": "precaution_Tuberculosis",
+      "patterns": [
+        "medicine for Tuberculosis",
+        "Recover of Tuberculosis",
+        "treatment for Tuberculosis",
+        "I am getting Tuberculosis",
+        "what is the precaution for Tuberculosis",
+        "how to avoid Tuberculosis",
+        "how to prevent Tuberculosis"
+      ],
+      "responses": [
+        "cover mouth",
+        "consult doctor",
+        "medication",
+        "rest"
+      ]
+    }
+  ]
+}

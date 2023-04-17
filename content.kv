@@ -1,0 +1,168 @@
+<Command>
+    size_hint_y: None
+    pos_hint: {"right": .98}
+    text_size: self.width, None
+    height: self.texture_size[1]
+    padding: 12, 18
+    color: 0,0,0,1
+    canvas.before:
+        Color:
+            rgb: (1, 170/255, 23/255, 1)
+        RoundedRectangle:
+            size: self.width, self.height
+            pos: self.pos
+            radius: [23, 23, 0, 23]
+
+<Response>
+    size_hint_y: None
+    pos_hint: {"x": .02}
+    text_size: self.width, None
+    height: self.texture_size[1]
+    padding: 12, 18
+    color: 0,0,0,1
+    canvas.before:
+        Color:
+            rgb: (238/255, 238/255, 238/255, 1)
+        RoundedRectangle:
+            size: self.width, self.height
+            pos: self.pos
+            radius: [23, 23, 23, 0]
+
+Screen:
+    name: "content"
+    bot_name: bot_name
+    text_input: text_input
+    chat_list: chat_list
+    scroll_view: scroll_view
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        FloatLayout:
+            size_hint: .8, .2
+            canvas:
+                Color:
+                    rgb: (255/255,192/255,203/255,1)
+
+            Label:
+                id: bot_name
+                text:"AI Chatbot"
+                size_hint: 1, .1
+                pos_hint: {"center_x":.5, "center_y": .97}
+                background_color: (255/255,192/255,203/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+
+            GridLayout:
+                cols:1
+                height: self.minimum_height
+
+                FloatLayout:
+
+                    ScrollView:
+                        id: scroll_view
+                        do_scroll_x: False
+                        do_scroll_y: True
+                        always_overscroll: True
+
+                        BoxLayout:
+                            id: chat_list
+                            orientation: "vertical"
+                            size: (root.width, root.height)
+                            height: self.minimum_height
+                            size_hint: None, None
+                            pos_hint: {'top': 10}
+                            cols: 1
+                            spacing: 8
+
+                    FloatLayout:
+
+                        FloatLayout:
+                            size_hint: .8, .13
+                            pos_hint: {"center_x":.43, "center_y": .3/2}
+                            canvas:
+                                Color:
+                                    rgb: (238/255, 238/255, 238/255, 1)
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
+
+                            TextInput:
+                                id: text_input
+                                hint_text: "Input Symptom"
+                                size_hint: 1, .7
+                                pos_hint: {"center_x":.5, "center_y": .5}
+                                multiline: False
+                                cursor_color: 1, 170/255, 23/255, 1
+                                cursor_width: "2sp"
+
+                        Button:
+                            text: "Send"
+                            size_hint: .3/2, .1
+                            pos_hint: {"center_x":.91, "center_y": .3/2}
+                            on_release: app.send()
+
+                GridLayout:
+                    cols:4
+                    size_hint: .8, .1
+                    Button:
+                        on_release:
+                            app.root.current = "content"
+                            root.manager.transition.direction = "left"
+                        Image:
+                            source:"home.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
+
+
+                    Button:
+                        on_release:
+                            app.root.current = "history"
+                            root.manager.transition.direction = "left"
+                        Image:
+                            source:"document.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
+
+                    Button:
+                        on_release:
+                            app.root.current = "profile"
+                            root.manager.transition.direction = "left"
+                            app.profile()
+                        Image:
+                            source:"person.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width
+
+                    Button:
+                        on_release:
+                            app.root.current = "setting"
+                            root.manager.transition.direction = "left"
+                        Image:
+                            source:"settings.png"
+                            size: self.size
+                            keep_ratio: True
+                            allow_stretch: False
+                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            x: self.parent.x
+                            width: self.parent.width

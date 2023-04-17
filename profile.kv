@@ -1,0 +1,290 @@
+Screen:
+    name: "profile"
+    profile: profile
+    username: username
+    age: age
+    body_weight: body_weight
+    body_height: body_height
+    gender: gender
+    email: email
+    phone: phone
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:1
+
+            Label:
+                id: profile
+                text:"Profile"
+                size_hint: .8, .6/5
+                background_color: (255/255,192/255,203/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+            GridLayout:
+                cols:2
+
+                Label:
+                    text:"Name"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: username
+                    text:"Name"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+                Label:
+                    text:"Age"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: age
+                    text:"Age"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+                Label:
+                    text:"Body Weight(kg)"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: body_weight
+                    text:"Body Weight(kg)"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+                Label:
+                    text:"Body Height(cm)"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: body_height
+                    text:"Body Height(cm)"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+                Label:
+                    text:"Gender(Male/Female)"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: gender
+                    text:"Gender(Male/Female)"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+                Label:
+                    text:"Email"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: email
+                    text:"Email"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+                Label:
+                    text:"Phone Number"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                Label:
+                    id: phone
+                    text:"Phone Number"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'center'
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+
+            GridLayout:
+                cols:1
+                size_hint: .8, .1
+
+                Button:
+                    text: "Edit Profile"
+                    on_release:
+                        app.update_profile_detail()
+
+
+            GridLayout:
+                cols:4
+                size_hint: .8, .6/5
+                Button:
+                    on_release:
+                        app.root.current = "content"
+                        root.manager.transition.direction = "right"
+                    Image:
+                        source:"home.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
+
+
+                Button:
+                    on_release:
+                        app.root.current = "history"
+                        root.manager.transition.direction = "right"
+                    Image:
+                        source:"document.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
+
+                Button:
+                    on_release:
+                        app.root.current = "profile"
+                        root.manager.transition.direction = "left"
+                        app.profile()
+                    Image:
+                        source:"person.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
+
+                Button:
+                    on_release:
+                        app.root.current = "setting"
+                        root.manager.transition.direction = "left"
+                    Image:
+                        source:"settings.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width

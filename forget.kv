@@ -1,0 +1,120 @@
+Screen:
+    name: "forget"
+    change_pass: change_pass
+    fg_email: fg_email
+    fg_passwd: fg_passwd
+    fg_confirm_passwd: fg_confirm_passwd
+    btn_fg_p: btn_fg_p
+    btn_fg_cp: btn_fg_cp
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:1
+
+            Label:
+                id: change_pass
+                text:"Change Password"
+                size_hint: .8, .6/5
+                background_color: (255/255,192/255,203/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+            GridLayout:
+                cols:2
+                size_hint: .8,.3/2
+
+                Label:
+                    text:"Email"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: fg_email
+                    hint_text: 'Enter Email'
+                    size_hint: .8, .2
+                    multiline:False
+
+            GridLayout:
+                cols:3
+                size_hint: .8, .5/2
+
+                Label:
+                    text:"Password"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: fg_passwd
+                    hint_text: 'Enter Password'
+                    size_hint: .8, .2
+                    multiline:False
+                    password: True
+
+                Button:
+                    id: btn_fg_p
+                    size_hint: .2,.1
+                    text: "Show"
+                    on_press: app.toggle_visibility()
+
+                Label:
+                    text:"Confirm Password"
+                    background_color: (211/255,211/255,211/255,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    color: 0,0,0,1
+                    bold: True
+
+                TextInput:
+                    id: fg_confirm_passwd
+                    hint_text: 'Enter Password Again'
+                    size_hint: .8, .2
+                    multiline:False
+                    password: True
+
+                Button:
+                    id: btn_fg_cp
+                    size_hint: .2,.1
+                    text: "Show"
+                    on_press: app.toggle_visibility()
+
+            GridLayout:
+                cols:1
+                size_hint: .8,.8
+
+            GridLayout:
+                cols:1
+                size_hint: .8,.2
+
+
+                Button:
+                    text: "Change"
+                    on_release: app.update_pass()
+
+

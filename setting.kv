@@ -1,0 +1,102 @@
+Screen:
+    name: "setting"
+    setting: setting
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:1
+            size_hint: .8, .8
+
+            Label:
+                id: setting
+                text:"Setting"
+                size_hint: .8, .2
+                background_color: (255/255,192/255,203/255,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                color: 0,0,0,1
+                bold: True
+
+            GridLayout:
+                cols:1
+                size_hint: .8,.4
+
+                Button:
+                    text: "Change Password"
+                    size_hint: .8,.1
+                    on_release:
+                        app.change_password()
+
+                Button:
+                    text: "Log Out"
+                    size_hint: .8,.1
+                    on_release:
+                        app.log_out()
+
+            GridLayout:
+                cols:1
+                size_hint: .8,.8
+
+            GridLayout:
+                cols:4
+                size_hint: .8, .3/2
+                Button:
+                    on_release:
+                        app.root.current = "content"
+                        root.manager.transition.direction = "right"
+                    Image:
+                        source:"home.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
+
+
+                Button:
+                    on_release:
+                        app.root.current = "history"
+                        root.manager.transition.direction = "right"
+                    Image:
+                        source:"document.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
+
+                Button:
+                    on_release:
+                        app.root.current = "profile"
+                        root.manager.transition.direction = "right"
+                        app.profile()
+                    Image:
+                        source:"person.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
+
+                Button:
+                    on_release:
+                        app.root.current = "setting"
+                        root.manager.transition.direction = "left"
+                    Image:
+                        source:"settings.png"
+                        size: self.size
+                        keep_ratio: True
+                        allow_stretch: False
+                        y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                        x: self.parent.x
+                        width: self.parent.width
