@@ -131,6 +131,7 @@ Screen:
                         on_release:
                             app.root.current = "history"
                             root.manager.transition.direction = "left"
+                            app.history()
                         Image:
                             source:"document.png"
                             size: self.size
