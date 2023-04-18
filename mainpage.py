@@ -128,6 +128,7 @@ class parentApp(App):
         screen_manager.current = name
 
     def build(self):
+        self.icon = "virus.png"
         Window.clearcolor = (1, 1, 1, 1)
         global screen_manager, description_list
         screen_manager = ScreenManager()
