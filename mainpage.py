@@ -152,7 +152,7 @@ class parentApp(App):
 
         c = mydb.cursor()
 
-        # sql = "DELETE FROM results WHERE email = 'fucai99@gmail.com'"
+        # sql = "DELETE FROM users WHERE email = 'fucai99@gmail.com'"
         # c.execute(sql)
 
         sql2 = "SELECT * FROM users"
@@ -162,12 +162,12 @@ class parentApp(App):
         for x in result:
             print(x)
 
-        sql3 = "SELECT * FROM results"
-        c.execute(sql3)
-        result2 = c.fetchall()
-
-        for a in result2:
-            print(a)
+        # sql3 = "SELECT * FROM results"
+        # c.execute(sql3)
+        # result2 = c.fetchall()
+        #
+        # for a in result2:
+        #     print(a)
 
         #c.execute("""DROP TABLE results""")
 
@@ -219,6 +219,9 @@ class parentApp(App):
         email = screen_manager.get_screen('main').email.text
         passwd = screen_manager.get_screen('main').passwd.text
 
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        match = re.match(pattern, email)
+
         mydb = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -241,7 +244,7 @@ class parentApp(App):
             popup = Popup(title='Error', content=layout)
             popup.open()
             closeButton.bind(on_press=popup.dismiss)
-        elif result:
+        elif result and match:
             self.root.transition.direction = "left"
             self.root.current = "content"
             app = App.get_running_app()
@@ -249,7 +252,7 @@ class parentApp(App):
             # self.root.transition.direction = "left"
             # self.root.current = "content"
         else:
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+            layout = GridLayout(cols=1, size_hint=(.6, .3), pos_hint={"x": .2, "top": .9}, padding=10)
             popupLabel = Label(text="Email does not register yet\nor\nEmail or password was wrong ")
             closeButton = Button(text="Close to continue")
             layout.add_widget(popupLabel)
@@ -415,9 +418,10 @@ class parentApp(App):
         c.execute(sql2)
         result = c.fetchall()
 
+
         if (email,) in result:
             layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Username already exist")
+            popupLabel = Label(text="Email already exist")
             closeButton = Button(text="Close to continue")
             layout.add_widget(popupLabel)
             layout.add_widget(closeButton)
@@ -443,21 +447,14 @@ class parentApp(App):
             popup.open()
             closeButton.bind(on_press = popup.dismiss)
         else:
-            sql = """INSERT INTO users (name, age, weight, height, gender, email, phone, password, confirm_password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            record = (username, age, weight, height, gender, email, phone, password, confirm_password)
-            c.execute(sql, record)
 
+            pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            match = re.match(pattern, email)
+            if match:
+                sql = """INSERT INTO users (name, age, weight, height, gender, email, phone, password, confirm_password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                record = (username, age, weight, height, gender, email, phone, password, confirm_password)
+                c.execute(sql, record)
 
-            if sql == "":
-                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                popupLabel = Label(text="Register Fail")
-                closeButton = Button(text="Close to continue")
-                layout.add_widget(popupLabel)
-                layout.add_widget(closeButton)
-                popup = Popup(title='Error', content=layout)
-                popup.open()
-                closeButton.bind(on_press=popup.dismiss)
-            else:
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
                 popupLabel = Label(text="Register Successful")
                 closeButton = Button(text="Close to continue")
@@ -467,6 +464,16 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
                 self.root.current = "main"
+            else:
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Email format was wrong")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+
 
         mydb.commit()
 
@@ -501,7 +508,6 @@ class parentApp(App):
         sql = f"SELECT * FROM results WHERE email = '{user_details['email']}'"
         c.execute(sql)
         result = c.fetchall()
-        print(result)
 
         if result:
             count = 0
