@@ -1,6 +1,5 @@
 #FYP Project 69803
 from kivy.uix.gridlayout import GridLayout
-from kivyauth.google_auth import initialize_google, login_google, logout_google
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -19,7 +18,6 @@ import warnings
 import pandas as pd
 import mysql.connector
 import re
-import string
 import random
 import json
 import pickle
@@ -106,6 +104,13 @@ class Response(Label):
     font_size = 17
 
 
+class History(Label):
+    text = StringProperty
+    size_hint_x = NumericProperty
+    halign = StringProperty
+    font_size = 17
+
+
 class Label(Label):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -124,9 +129,6 @@ class parentApp(App):
 
     def build(self):
         Window.clearcolor = (1, 1, 1, 1)
-        client_id = open("client_id.txt")
-        client_secret = open("client_secret.txt")
-        initialize_google(self.after_login, self.error_listener, client_id.read(), client_secret.read())
         global screen_manager, description_list
         screen_manager = ScreenManager()
         screen_manager.add_widget(Builder.load_file("parent.kv"))
@@ -213,27 +215,6 @@ class parentApp(App):
             json.dump(_precaution, json_file,indent=2)
 
 
-    def after_login(self, name, email, gender):
-        self.root.transition.direction = "left"
-        self.root.current = "content"
-
-
-    def error_listener(self):
-        print("Login Failed")
-
-
-    def google_login(self):
-        login_google()
-
-
-    def logout(self):
-        logout_google(self.after_logout())
-
-
-    def after_logout(self):
-        self.root.transition.direction = "right"
-        self.root.current = "main"
-
     def log_in(self):
         email = screen_manager.get_screen('main').email.text
         passwd = screen_manager.get_screen('main').passwd.text
@@ -297,6 +278,10 @@ class parentApp(App):
         popup.open()
         backButton.bind(on_press=popup.dismiss, on_release=self.go_to_setting)
         closeButton.bind(on_press = popup.dismiss, on_release = self.go_to_main)
+
+    def go_to_content(self, instance):
+        self.root.transition.direction = "left"
+        self.root.current = "content"
 
     def go_to_main(self, instance):
         self.root.transition.direction = "left"
@@ -498,6 +483,7 @@ class parentApp(App):
         screen_manager.get_screen('register').confirm_passwd.text = ""
 
     def history(self):
+        screen_manager.get_screen('history').history_list.clear_widgets()
         mydb = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -511,27 +497,33 @@ class parentApp(App):
         app = App.get_running_app()
         user_details = app.user_details
 
-        label = Label(text="Email",size_hint=(.65, None), color=(0, 0, 1, 1))
-        label2 = Label(text="Email", size_hint=(.65, None), color=(0, 0, 1, 1))
-        screen_manager.get_screen('history').history_list.add_widget(label)
-        screen_manager.get_screen('history').history_list.add_widget(label2)
 
-        # sql = (f"SELECT * FROM results WHERE email = '{user_details['email']}")
-        # c.execute(sql)
-        # result = c.fetchall()
-        # print(result)
-        #
-        # if sql == "":
-        #     layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-        #     popupLabel = Label(text="You have no done prediction yet")
-        #     closeButton = Button(text="Close to continue")
-        #     layout.add_widget(popupLabel)
-        #     layout.add_widget(closeButton)
-        #     popup = Popup(title='Error', content=layout)
-        #     popup.open()
-        #     closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_main)
-        # else:
-        #     pass
+        sql = f"SELECT * FROM results WHERE email = '{user_details['email']}'"
+        c.execute(sql)
+        result = c.fetchall()
+        print(result)
+
+        if result:
+            count = 0
+            for i in result:
+                count += 1
+                app.results = {'email': i[0], 'symptom': i[1], 'disease': i[2], 'score': i[3]}
+                results = app.results
+                screen_manager.get_screen('history').history_list.add_widget(History(text="NO." + str(count) + ":\n" + results['symptom']))
+                screen_manager.get_screen('history').history_list.add_widget(History(text=results['disease']))
+                screen_manager.get_screen('history').history_list.add_widget(History(text=results['score']))
+
+
+        else:
+            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+            popupLabel = Label(text="You have no done prediction yet")
+            closeButton = Button(text="Close to continue")
+            layout.add_widget(popupLabel)
+            layout.add_widget(closeButton)
+            popup = Popup(title='Error', content=layout)
+            popup.open()
+            closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_content)
+
 
         mydb.commit()
 
@@ -617,6 +609,13 @@ class parentApp(App):
 
 
     def toggle_visibility(self):
+        if screen_manager.get_screen('main').passwd.password == True:
+            screen_manager.get_screen('main').passwd.password = False
+            screen_manager.get_screen('main').btn_log.text = "Hide"
+        elif screen_manager.get_screen('main').passwd.password == False:
+            screen_manager.get_screen('main').passwd.password = True
+            screen_manager.get_screen('main').btn_log.text = "Show"
+
         if screen_manager.get_screen('register').passwd.password == True:
             screen_manager.get_screen('register').passwd.password = False
             screen_manager.get_screen('register').btn_p.text = "Hide"
@@ -755,76 +754,77 @@ class parentApp(App):
 
 
         if tag == 'symptoms':
+
+            list_m = message.split(',')
+            psymptoms = [message.replace(' ','_') for message in list_m]
+
+
+            a = np.array(df1["Symptom"])
+            b = np.array(df1["weight"])
+
+            for j in range(len(psymptoms)):
+                for k in range(len(a)):
+                    if psymptoms[j] == a[k]:
+                        psymptoms[j] = b[k]
+
+            if len(psymptoms) < 2:
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Please enter at least two symptoms for prediction.")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Symptom Quantity', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+            elif len(psymptoms) == 2:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 3:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 4:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 5:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 6:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 7:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 8:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 9:
+                nulls = [0, 0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 10:
+                nulls = [0, 0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 11:
+                nulls = [0, 0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 12:
+                nulls = [0, 0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 13:
+                nulls = [0, 0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 14:
+                nulls = [0, 0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 15:
+                nulls = [0, 0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 16:
+                nulls = [0]
+                psymptoms.extend(nulls)
+            elif len(psymptoms) == 17:
+                pass
+
             try:
-                list_m = message.split(',')
-                psymptoms = [message.replace(' ','_') for message in list_m]
-
-
-                a = np.array(df1["Symptom"])
-                b = np.array(df1["weight"])
-
-                for j in range(len(psymptoms)):
-                    for k in range(len(a)):
-                        if psymptoms[j] == a[k]:
-                            psymptoms[j] = b[k]
-
-                if len(psymptoms) < 2:
-                    layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                    popupLabel = Label(text="Please enter at least two symptoms for prediction.")
-                    closeButton = Button(text="Close to continue")
-                    layout.add_widget(popupLabel)
-                    layout.add_widget(closeButton)
-                    popup = Popup(title='Symptom Quantity', content=layout)
-                    popup.open()
-                    closeButton.bind(on_press=popup.dismiss)
-                elif len(psymptoms) == 2:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 3:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 4:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 5:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 6:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 7:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 8:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 9:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 10:
-                    nulls = [0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 11:
-                    nulls = [0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 12:
-                    nulls = [0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 13:
-                    nulls = [0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 14:
-                    nulls = [0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 15:
-                    nulls = [0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 16:
-                    nulls = [0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 17:
-                    pass
-
                 array_symptom = np.array(psymptoms)
                 array_symptom_2d = array_symptom.reshape(1,-1)
 
@@ -840,7 +840,7 @@ class parentApp(App):
                 c.execute(sql, record)
 
 
-            except Exception as e:
+            except Exception:
                 symptom_list = ["itching", "skin rash", "nodal skin eruptions", "continuous sneezing", "shivering",
                                 "chills",
                                 "joint pain", "stomach pain", "acidity", "ulcers on tongue", "muscle wasting",
@@ -879,8 +879,8 @@ class parentApp(App):
                                 "small dents in nails", "inflammatory nails", "blister", "red sore around nose",
                                 "yellow crust ooze"]
                 symptom_str = ",".join(symptom_list)
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(symptom_str), size_hint=(.65, None)))
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(e) + ". Please enter the given relevant symptom as above provided without space between comma. Eg: Itching (Not itchy/itchings)", size_hint=(.65, None)))
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(symptom_str), size_hint=(.80, None)))
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please enter the given relevant symptom as above provided without space between comma. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
 
 
         elif tag == 'datetime':

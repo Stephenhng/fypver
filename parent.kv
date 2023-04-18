@@ -2,6 +2,7 @@ Screen:
     name: "main"
     email: email
     passwd: passwd
+    btn_log: btn_log
 
     GridLayout:
         cols:1
@@ -10,7 +11,7 @@ Screen:
             source: "chatbot2.png"
 
         GridLayout:
-            size_hint: .8, .5
+            size_hint: .8, .3
             cols:2
             Label:
                 text: "Email: "
@@ -31,6 +32,10 @@ Screen:
                 pos_hint: {'center_x': 0.5, 'center_y': 0.705}
                 size_hint: .8, .2
 
+        GridLayout:
+            cols:3
+            size_hint: .8, .3
+
             Label:
                 text: "Password: "
                 background_color: (211/255,211/255,211/255,1)
@@ -49,10 +54,21 @@ Screen:
                 hint_text:'Enter Password'
                 pos_hint: {'center_x': 0.5, 'center_y': 0.705}
                 size_hint: .8, .2
+                password: True
+
+            Button:
+                id: btn_log
+                size_hint: .2,.1
+                text: "Show"
+                on_press: app.toggle_visibility()
 
         Button:
             size_hint: .8, .2
             text:"Register"
+            background_down: ''
+            background_color: (91/255, 162/255, 244/255, 1)
+            border: (1, 1, 1, 1)
+            border_color: (255/255, 255/255, 255/255, 1)
             on_release:
                 app.root.current = "register"
                 root.manager.transition.direction = "left"
@@ -60,6 +76,10 @@ Screen:
         Button:
             size_hint: .8, .2
             text:"Login"
+            background_down: ''
+            background_color: (91/255, 162/255, 244/255, 1)
+            border: (1, 1, 1, 1)
+            border_color: (255/255, 255/255, 255/255, 1)
             on_release:
                 app.log_in()
 
@@ -72,13 +92,6 @@ Screen:
                 color: "#2200CC"
                 background_color: 0, 0, 0, 0
                 on_release: app.forget_pass()
-
-        FloatLayout:
-            Button:
-                background_normal: 'google.png'
-                size_hint: None, None
-                pos_hint: {"center_x":.50, "center_y": .5}
-                on_release: app.google_login()
 
         GridLayout:
             cols:1

@@ -1,5 +1,21 @@
+<History>
+    size_hint_y: None
+    pos_hint: {"x": .02}
+    text_size: self.width, None
+    height: self.texture_size[1]
+    padding: 10, 16
+    color: 0,0,0,1
+    canvas.before:
+        Color:
+            rgb: (0, 176/255, 255/255, 1)
+        RoundedRectangle:
+            size: self.width, self.height
+            pos: self.pos
+            radius: [10, 10, 10, 10]
+
 Screen:
     name: "history"
+    scroll_view: scroll_view
     history: history
     history_list: history_list
 
@@ -42,7 +58,7 @@ Screen:
                         always_overscroll: True
 
                         GridLayout:
-                            cols: 2
+                            cols: 3
                             id: history_list
                             size: (root.width, root.height)
                             height: self.minimum_height
