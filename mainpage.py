@@ -249,8 +249,6 @@ class parentApp(App):
             self.root.current = "content"
             app = App.get_running_app()
             app.user_details = {'name': result[0], 'age': result[1], 'weight': result[2], 'height': result[3], 'gender': result[4], 'email': result[5], 'phone': result[6], 'password': result[7], 'confirm_password':result[8]}
-            # self.root.transition.direction = "left"
-            # self.root.current = "content"
         else:
             layout = GridLayout(cols=1, size_hint=(.6, .3), pos_hint={"x": .2, "top": .9}, padding=10)
             popupLabel = Label(text="Email does not register yet\nor\nEmail or password was wrong ")
@@ -895,7 +893,7 @@ class parentApp(App):
             screen_manager.get_screen('content').chat_list.add_widget(Response(text="What are you going to ask?", size_hint=(.65, None)))
         elif tag == 'goodbye':
             screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
-            url = "https://chat.openai.com/"
+            url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
             label = Label(text="Click here to give us feedback", size_hint=(.65, None), color=(0, 0, 1, 1), underline=True)
             label.url = url
             screen_manager.get_screen('content').chat_list.add_widget(label)
