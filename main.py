@@ -1,7 +1,6 @@
 #FYP Project 69803
 from kivy.uix.gridlayout import GridLayout
 from kivy.app import App
-from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -10,9 +9,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from datetime import datetime
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
-from sklearn import model_selection
 import csv
 import warnings
 import pandas as pd
