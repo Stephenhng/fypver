@@ -13,7 +13,7 @@ from sklearn.model_selection import cross_val_score
 import csv
 import warnings
 import pandas as pd
-import mysql.connector
+import sqlite3
 import re
 import random
 import json
@@ -27,6 +27,10 @@ from nltk.stem import WordNetLemmatizer
 from keras.models import load_model
 
 import machine
+import os.path
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "disease.db")
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -53,8 +57,6 @@ print(rfc_result)
 rfc_score = cross_val_score(model2, machine.x_test, machine.y_test, cv=10)
 print(rfc_score)
 
-
-Window.size = (350, 550)
 now = datetime.now()
 
 
@@ -111,47 +113,42 @@ class parentApp(App):
         self.disease_description()
         self.disease_precaution()
 
-        mydb = mysql.connector.connect(
-            host = "localhost",
-            user = "root",
-            passwd = "990331@Hngsw",
-            database = "second_db",
+        with sqlite3.connect(db_path) as mydb:
 
-        )
+            c = mydb.cursor()
 
-        c = mydb.cursor()
+            # sql = "DELETE FROM users WHERE email = 'fucai99@gmail.com'"
+            # c.execute(sql)
 
-        # sql = "DELETE FROM users WHERE email = 'fucai99@gmail.com'"
-        # c.execute(sql)
+            sql2 = "SELECT * FROM users"
+            c.execute(sql2)
+            result = c.fetchall()
 
-        sql2 = "SELECT * FROM users"
-        c.execute(sql2)
-        result = c.fetchall()
+            for x in result:
+                print(x)
 
-        for x in result:
-            print(x)
+            # sql3 = "SELECT * FROM results"
+            # c.execute(sql3)
+            # result2 = c.fetchall()
+            #
+            # for a in result2:
+            #     print(a)
 
-        # sql3 = "SELECT * FROM results"
-        # c.execute(sql3)
-        # result2 = c.fetchall()
-        #
-        # for a in result2:
-        #     print(a)
+            #c.execute("""DROP TABLE results""")
 
-        #c.execute("""DROP TABLE results""")
+            #c.execute("SHOW DATABASES")
+            #for db in c:
+            #    print(db)
 
-        #c.execute("SHOW DATABASES")
-        #for db in c:
-        #    print(db)
+            #c.execute("SELECT * FROM users")
+            #print(c.description)
 
-        #c.execute("SELECT * FROM users")
-        #print(c.description)
+            # c.execute("""CREATE TABLE IF NOT EXISTS users (name VARCHAR(255), age INT(10), weight INT(10), height INT(10), gender VARCHAR(255), email VARCHAR(255), phone VARCHAR(255), password VARCHAR(255), confirm_password VARCHAR(255))""")
+            # c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255), score VARCHAR(255))""")
 
-        # c.execute("""CREATE TABLE results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255), score VARCHAR(255))""")
-        #
-        # c.execute("SHOW TABLES")
-        # for x in c:
-        #    print(x)
+            # c.execute("SHOW TABLES")
+            # for x in c:
+            #    print(x)
 
         mydb.commit()
 
@@ -191,42 +188,36 @@ class parentApp(App):
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         match = re.match(pattern, email)
 
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="990331@Hngsw",
-            database="second_db",
+        with sqlite3.connect(db_path) as mydb:
+            c = mydb.cursor()
 
-        )
-        c = mydb.cursor()
+            sql = (f"SELECT * FROM users WHERE email = '{email}' and password = '{passwd}'")
+            c.execute(sql)
+            result = c.fetchone()
 
-        sql = (f"SELECT * FROM users WHERE email = '{email}' and password = '{passwd}'")
-        c.execute(sql)
-        result = c.fetchone()
-
-        if email == "" or passwd == "":
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Please fill all the blank to login")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
-        elif result and match:
-            self.root.transition.direction = "left"
-            self.root.current = "content"
-            app = App.get_running_app()
-            app.user_details = {'name': result[0], 'age': result[1], 'weight': result[2], 'height': result[3], 'gender': result[4], 'email': result[5], 'phone': result[6], 'password': result[7], 'confirm_password':result[8]}
-        else:
-            layout = GridLayout(cols=1, size_hint=(.6, .3), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Email does not register yet\nor\nEmail or password was wrong ")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
+            if email == "" or passwd == "":
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Please fill all the blank to login")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+            elif result and match:
+                self.root.transition.direction = "left"
+                self.root.current = "content"
+                app = App.get_running_app()
+                app.user_details = {'name': result[0], 'age': result[1], 'weight': result[2], 'height': result[3], 'gender': result[4], 'email': result[5], 'phone': result[6], 'password': result[7], 'confirm_password':result[8]}
+            else:
+                layout = GridLayout(cols=1, size_hint=(.6, .3), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Email does not register yet\nor\nEmail or password was wrong ")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
 
 
         mydb.commit()
@@ -296,50 +287,44 @@ class parentApp(App):
         fg_passwd = screen_manager.get_screen('forget').fg_passwd.text
         fg_confirm_passwd = screen_manager.get_screen('forget').fg_confirm_passwd.text
 
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="990331@Hngsw",
-            database="second_db",
+        with sqlite3.connect(db_path) as mydb:
+            c = mydb.cursor()
 
-        )
-        c = mydb.cursor()
+            sql = "SELECT email FROM users"
+            c.execute(sql)
+            result = c.fetchall()
 
-        sql = "SELECT email FROM users"
-        c.execute(sql)
-        result = c.fetchall()
+            if (fg_email,) not in result:
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Email does not register yet")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+            elif fg_email == "" or fg_passwd == "" or fg_confirm_passwd == "":
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Please fill all the blank.")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+            else:
+                sql2 = "UPDATE users SET password = %s , confirm_password = %s WHERE email = %s"
+                var = (fg_passwd, fg_confirm_passwd , fg_email)
+                c.execute(sql2, var)
 
-        if (fg_email,) not in result:
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Email does not register yet")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
-        elif fg_email == "" or fg_passwd == "" or fg_confirm_passwd == "":
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Please fill all the blank.")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
-        else:
-            sql2 = "UPDATE users SET password = %s , confirm_password = %s WHERE email = %s"
-            var = (fg_passwd, fg_confirm_passwd , fg_email)
-            c.execute(sql2, var)
-
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Save/Update successful. Proceed to Login")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Change Password', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_main)
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Save/Update successful. Proceed to Login")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Change Password', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_main)
 
 
         mydb.commit()
@@ -371,75 +356,69 @@ class parentApp(App):
         confirm_password = re.sub(r"\s+", "", confirm_password)
 
 
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="990331@Hngsw",
-            database="second_db",
+        with sqlite3.connect(db_path) as mydb:
 
-        )
+            c = mydb.cursor()
 
-        c = mydb.cursor()
-
-        sql2 = "SELECT name FROM users"
-        c.execute(sql2)
-        result = c.fetchall()
+            sql2 = "SELECT name FROM users"
+            c.execute(sql2)
+            result = c.fetchall()
 
 
-        if (email,) in result:
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Email already exist")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
-        elif password != confirm_password:
-            layout = GridLayout(cols = 1,size_hint = (.6,.2), pos_hint = {"x":.2,"top": .9}, padding = 10)
-            popupLabel = Label(text = "Password and Confirm Password must same")
-            closeButton = Button(text = "Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title = 'Error', content = layout)
-            popup.open()
-            closeButton.bind(on_press = popup.dismiss)
-        elif username == "" or age == "" or weight == "" or height == "" or gender == "" or email == "" or phone == "" or password == "" or confirm_password == "":
-            layout = GridLayout(cols = 1, size_hint = (.6, .2), pos_hint = {"x": .2, "top": .9}, padding = 10)
-            popupLabel = Label(text = "Please fill all the blank to register a new account")
-            closeButton = Button(text = "Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title = 'Error', content = layout)
-            popup.open()
-            closeButton.bind(on_press = popup.dismiss)
-        else:
-
-            pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-            match = re.match(pattern, email)
-            if match:
-                sql = """INSERT INTO users (name, age, weight, height, gender, email, phone, password, confirm_password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-                record = (username, age, weight, height, gender, email, phone, password, confirm_password)
-                c.execute(sql, record)
-
+            if (email,) in result:
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                popupLabel = Label(text="Register Successful")
-                closeButton = Button(text="Close to continue")
-                layout.add_widget(popupLabel)
-                layout.add_widget(closeButton)
-                popup = Popup(title='Registration', content=layout)
-                popup.open()
-                closeButton.bind(on_press=popup.dismiss)
-                self.root.current = "main"
-            else:
-                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                popupLabel = Label(text="Email format was wrong")
+                popupLabel = Label(text="Email already exist")
                 closeButton = Button(text="Close to continue")
                 layout.add_widget(popupLabel)
                 layout.add_widget(closeButton)
                 popup = Popup(title='Error', content=layout)
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
+            elif password != confirm_password:
+                layout = GridLayout(cols = 1,size_hint = (.6,.2), pos_hint = {"x":.2,"top": .9}, padding = 10)
+                popupLabel = Label(text = "Password and Confirm Password must same")
+                closeButton = Button(text = "Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title = 'Error', content = layout)
+                popup.open()
+                closeButton.bind(on_press = popup.dismiss)
+            elif username == "" or age == "" or weight == "" or height == "" or gender == "" or email == "" or phone == "" or password == "" or confirm_password == "":
+                layout = GridLayout(cols = 1, size_hint = (.6, .2), pos_hint = {"x": .2, "top": .9}, padding = 10)
+                popupLabel = Label(text = "Please fill all the blank to register a new account")
+                closeButton = Button(text = "Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title = 'Error', content = layout)
+                popup.open()
+                closeButton.bind(on_press = popup.dismiss)
+            else:
+
+                pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+                match = re.match(pattern, email)
+                if match:
+                    sql = """INSERT INTO users (name, age, weight, height, gender, email, phone, password, confirm_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+                    record = (username, age, weight, height, gender, email, phone, password, confirm_password)
+                    c.execute(sql, record)
+
+                    layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                    popupLabel = Label(text="Register Successful")
+                    closeButton = Button(text="Close to continue")
+                    layout.add_widget(popupLabel)
+                    layout.add_widget(closeButton)
+                    popup = Popup(title='Registration', content=layout)
+                    popup.open()
+                    closeButton.bind(on_press=popup.dismiss)
+                    self.root.current = "main"
+                else:
+                    layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                    popupLabel = Label(text="Email format was wrong")
+                    closeButton = Button(text="Close to continue")
+                    layout.add_widget(popupLabel)
+                    layout.add_widget(closeButton)
+                    popup = Popup(title='Error', content=layout)
+                    popup.open()
+                    closeButton.bind(on_press=popup.dismiss)
 
 
         mydb.commit()
@@ -458,44 +437,38 @@ class parentApp(App):
 
     def history(self):
         screen_manager.get_screen('history').history_list.clear_widgets()
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="990331@Hngsw",
-            database="second_db",
+        with sqlite3.connect(db_path) as mydb:
 
-        )
+            c = mydb.cursor()
 
-        c = mydb.cursor()
-
-        app = App.get_running_app()
-        user_details = app.user_details
+            app = App.get_running_app()
+            user_details = app.user_details
 
 
-        sql = f"SELECT * FROM results WHERE email = '{user_details['email']}'"
-        c.execute(sql)
-        result = c.fetchall()
+            sql = f"SELECT * FROM results WHERE email = '{user_details['email']}'"
+            c.execute(sql)
+            result = c.fetchall()
 
-        if result:
-            count = 0
-            for i in result:
-                count += 1
-                app.results = {'email': i[0], 'symptom': i[1], 'disease': i[2], 'score': i[3]}
-                results = app.results
-                screen_manager.get_screen('history').history_list.add_widget(History(text="NO." + str(count) + ":\n" + results['symptom']))
-                screen_manager.get_screen('history').history_list.add_widget(History(text=results['disease']))
-                screen_manager.get_screen('history').history_list.add_widget(History(text=results['score']))
+            if result:
+                count = 0
+                for i in result:
+                    count += 1
+                    app.results = {'email': i[0], 'symptom': i[1], 'disease': i[2], 'score': i[3]}
+                    results = app.results
+                    screen_manager.get_screen('history').history_list.add_widget(History(text="NO." + str(count) + ":\n" + results['symptom']))
+                    screen_manager.get_screen('history').history_list.add_widget(History(text=results['disease']))
+                    screen_manager.get_screen('history').history_list.add_widget(History(text=results['score']))
 
 
-        else:
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="You have no done prediction yet")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_content)
+            else:
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="You have no done prediction yet")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_content)
 
 
         mydb.commit()
@@ -537,43 +510,37 @@ class parentApp(App):
         up_phone = re.sub(r"\s+", "", up_phone)
 
 
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="990331@Hngsw",
-            database="second_db",
+        with sqlite3.connect(db_path) as mydb:
 
-        )
+            c = mydb.cursor()
 
-        c = mydb.cursor()
-
-        app = App.get_running_app()
-        user_details = app.user_details
+            app = App.get_running_app()
+            user_details = app.user_details
 
 
-        if up_username == "" or up_age == "" or up_weight == "" or up_height == "" or up_gender == "" or up_phone == "":
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Please fill all the blank to register a new account")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Error', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
-        else:
+            if up_username == "" or up_age == "" or up_weight == "" or up_height == "" or up_gender == "" or up_phone == "":
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Please fill all the blank to register a new account")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Error', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+            else:
 
-            sql2 = (f"UPDATE users SET name = %s, age = %s, weight = %s, height = %s, gender = %s, phone = %s WHERE email = '{user_details['email']}'")
-            var = (up_username, up_age, up_weight, up_height, up_gender, up_phone)
-            c.execute(sql2, var)
+                sql2 = (f"UPDATE users SET name = %s, age = %s, weight = %s, height = %s, gender = %s, phone = %s WHERE email = '{user_details['email']}'")
+                var = (up_username, up_age, up_weight, up_height, up_gender, up_phone)
+                c.execute(sql2, var)
 
-            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-            popupLabel = Label(text="Save/Update successful")
-            closeButton = Button(text="Close to continue")
-            layout.add_widget(popupLabel)
-            layout.add_widget(closeButton)
-            popup = Popup(title='Edit/Update Details', content=layout)
-            popup.open()
-            closeButton.bind(on_press=popup.dismiss)
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Save/Update successful")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Edit/Update Details', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
 
 
         mydb.commit()
@@ -676,202 +643,196 @@ class parentApp(App):
     def send(self):
         global size, halign, valign
 
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="990331@Hngsw",
-            database="second_db",
+        with sqlite3.connect(db_path) as mydb:
+            c = mydb.cursor()
 
-        )
-        c = mydb.cursor()
-
-        app = App.get_running_app()
-        user_details = app.user_details
+            app = App.get_running_app()
+            user_details = app.user_details
 
 
-        message = screen_manager.get_screen('content').text_input.text
-        ints = self.predict_class(message)
-        res = self.response(ints, intents, description_intents, precaution_intents)
-        tag = ints[0]['intent']
+            message = screen_manager.get_screen('content').text_input.text
+            ints = self.predict_class(message)
+            res = self.response(ints, intents, description_intents, precaution_intents)
+            tag = ints[0]['intent']
 
 
 
-        if  screen_manager.get_screen('content').text_input != "":
-            if len(message) < 6:
-                size = .22, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 11:
-                size = .32, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 16:
-                size = .45, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 21:
-                size = .58, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 26:
-                size = .71, None
-                halign = "center"
-                valign = "middle"
+            if  screen_manager.get_screen('content').text_input != "":
+                if len(message) < 6:
+                    size = .22, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(message) < 11:
+                    size = .32, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(message) < 16:
+                    size = .45, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(message) < 21:
+                    size = .58, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(message) < 26:
+                    size = .71, None
+                    halign = "center"
+                    valign = "middle"
+                else:
+                    size = .77, None
+                    halign = "left"
+                    valign = "middle"
+
+
+            screen_manager.get_screen('content').chat_list.add_widget(Command(text=message, size_hint=size, halign=halign))
+
+
+            if tag == 'symptoms':
+
+                list_m = message.split(',')
+                psymptoms = [message.replace(' ','_') for message in list_m]
+
+
+                a = np.array(df1["Symptom"])
+                b = np.array(df1["weight"])
+
+                for j in range(len(psymptoms)):
+                    for k in range(len(a)):
+                        if psymptoms[j] == a[k]:
+                            psymptoms[j] = b[k]
+
+                if len(psymptoms) < 2:
+                    layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                    popupLabel = Label(text="Please enter at least two symptoms for prediction.")
+                    closeButton = Button(text="Close to continue")
+                    layout.add_widget(popupLabel)
+                    layout.add_widget(closeButton)
+                    popup = Popup(title='Symptom Quantity', content=layout)
+                    popup.open()
+                    closeButton.bind(on_press=popup.dismiss)
+                elif len(psymptoms) == 2:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 3:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 4:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 5:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 6:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 7:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 8:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 9:
+                    nulls = [0, 0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 10:
+                    nulls = [0, 0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 11:
+                    nulls = [0, 0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 12:
+                    nulls = [0, 0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 13:
+                    nulls = [0, 0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 14:
+                    nulls = [0, 0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 15:
+                    nulls = [0, 0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 16:
+                    nulls = [0]
+                    psymptoms.extend(nulls)
+                elif len(psymptoms) == 17:
+                    pass
+
+                try:
+                    array_symptom = np.array(psymptoms)
+                    array_symptom_2d = array_symptom.reshape(1,-1)
+
+                    preds = model2.predict(array_symptom_2d)
+                    predstr = ",".join(preds)
+                    predstr = predstr.lower().replace("[]","")
+
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + str(rfc_result*100) + "%", size_hint=(.65, None)))
+
+                    sql = """INSERT INTO results (email, symptom, disease, score) VALUES (%s, %s, %s, %s)"""
+                    record = (user_details['email'], message, str(predstr), str(rfc_result*100))
+                    c.execute(sql, record)
+
+
+                except Exception:
+                    symptom_list = ["itching", "skin rash", "nodal skin eruptions", "continuous sneezing", "shivering",
+                                    "chills",
+                                    "joint pain", "stomach pain", "acidity", "ulcers on tongue", "muscle wasting",
+                                    "vomiting",
+                                    "burning micturition", "spotting urination", "fatigue", "weight gain", "anxiety",
+                                    "cold hands and feets", "mood swings", "weight loss", "restlessness", "lethargy",
+                                    "patches in throat", "irregular sugar level", "cough", "high fever", "sunken eyes",
+                                    "breathlessness", "sweating", "dehydration", "indigestion",
+                                    "headache", "yellowish skin", "dark urine", "nausea", "loss of appetite",
+                                    "pain behind the eyes", "back pain", "constipation", "abdominal pain", "diarrhoea",
+                                    "mild fever", "yellow urine", "yellowing of eyes", "acute liver failure",
+                                    "fluid overload",
+                                    "swelling of stomach", "swelled lymph nodes", "malaise", "blurred and distorted vision",
+                                    "phlegm", "throat irritation", "redness of eyes", "sinus pressure", "runny nose",
+                                    "congestion",
+                                    "chest pain", "weakness in limbs", "fast heart rate", "pain during bowel movements",
+                                    "pain in anal region", "bloody stool", "irritation in anus", "neck pain", "dizziness",
+                                    "cramps",
+                                    "bruising", "obesity", "swollen legs", "swollen blood vessels", "puffy face and eyes",
+                                    "enlarged thyroid", "brittle nails", "swollen extremeties", "excessive hunger",
+                                    "extra marital contacts", "drying and tingling lips", "slurred speech", "knee pain",
+                                    "hip joint pain", "muscle weakness", "stiff neck", "swelling joints",
+                                    "movement stiffness",
+                                    "spinning movements", "loss of balance", "unsteadiness", "weakness of one body side",
+                                    "loss of smell", "bladder discomfort", "foul smell ofurine", "continuous feel of urine",
+                                    "passage of gases", "internal itching", "toxic look (typhos)", "depression",
+                                    "irritability",
+                                    "muscle pain", "altered sensorium", "red spots over body", "belly pain",
+                                    "abnormal menstruation", "dischromic patches", "watering from eyes",
+                                    "increased appetite",
+                                    "polyuria", "family history", "mucoid sputum", "rusty sputum", "lack of concentration",
+                                    "visual disturbances", "receiving blood transfusion", "receiving unsterile injections",
+                                    "coma", "stomach bleeding", "distention of abdomen", "history of alcohol consumption",
+                                    "blood in sputum", "prominent veins on calf", "palpitations", "painful walking",
+                                    "pus filled pimples", "blackheads", "scurring", "skin peeling", "silver like dusting",
+                                    "small dents in nails", "inflammatory nails", "blister", "red sore around nose",
+                                    "yellow crust ooze"]
+                    symptom_str = ",".join(symptom_list)
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(symptom_str), size_hint=(.80, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please enter the given relevant symptom as above provided without space between comma. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
+
+
+            elif tag == 'datetime':
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text=now.strftime("%A \n%d %B %Y \n%H:%M:%S"), size_hint=(.65, None)))
+            elif len(message) == 0 or tag != ints[0]['intent']:
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text="What are you going to ask?", size_hint=(.65, None)))
+            elif tag == 'goodbye':
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
+                url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
+                label = Label(text="Click here to give us feedback", size_hint=(.65, None), color=(0, 0, 1, 1), underline=True)
+                label.url = url
+                screen_manager.get_screen('content').chat_list.add_widget(label)
             else:
-                size = .77, None
-                halign = "left"
-                valign = "middle"
-
-
-        screen_manager.get_screen('content').chat_list.add_widget(Command(text=message, size_hint=size, halign=halign))
-
-
-        if tag == 'symptoms':
-
-            list_m = message.split(',')
-            psymptoms = [message.replace(' ','_') for message in list_m]
-
-
-            a = np.array(df1["Symptom"])
-            b = np.array(df1["weight"])
-
-            for j in range(len(psymptoms)):
-                for k in range(len(a)):
-                    if psymptoms[j] == a[k]:
-                        psymptoms[j] = b[k]
-
-            if len(psymptoms) < 2:
-                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                popupLabel = Label(text="Please enter at least two symptoms for prediction.")
-                closeButton = Button(text="Close to continue")
-                layout.add_widget(popupLabel)
-                layout.add_widget(closeButton)
-                popup = Popup(title='Symptom Quantity', content=layout)
-                popup.open()
-                closeButton.bind(on_press=popup.dismiss)
-            elif len(psymptoms) == 2:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 3:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 4:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 5:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 6:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 7:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 8:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 9:
-                nulls = [0, 0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 10:
-                nulls = [0, 0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 11:
-                nulls = [0, 0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 12:
-                nulls = [0, 0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 13:
-                nulls = [0, 0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 14:
-                nulls = [0, 0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 15:
-                nulls = [0, 0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 16:
-                nulls = [0]
-                psymptoms.extend(nulls)
-            elif len(psymptoms) == 17:
-                pass
-
-            try:
-                array_symptom = np.array(psymptoms)
-                array_symptom_2d = array_symptom.reshape(1,-1)
-
-                preds = model2.predict(array_symptom_2d)
-                predstr = ",".join(preds)
-                predstr = predstr.lower().replace("[]","")
-
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + str(rfc_result*100) + "%", size_hint=(.65, None)))
-
-                sql = """INSERT INTO results (email, symptom, disease, score) VALUES (%s, %s, %s, %s)"""
-                record = (user_details['email'], message, str(predstr), str(rfc_result*100))
-                c.execute(sql, record)
-
-
-            except Exception:
-                symptom_list = ["itching", "skin rash", "nodal skin eruptions", "continuous sneezing", "shivering",
-                                "chills",
-                                "joint pain", "stomach pain", "acidity", "ulcers on tongue", "muscle wasting",
-                                "vomiting",
-                                "burning micturition", "spotting urination", "fatigue", "weight gain", "anxiety",
-                                "cold hands and feets", "mood swings", "weight loss", "restlessness", "lethargy",
-                                "patches in throat", "irregular sugar level", "cough", "high fever", "sunken eyes",
-                                "breathlessness", "sweating", "dehydration", "indigestion",
-                                "headache", "yellowish skin", "dark urine", "nausea", "loss of appetite",
-                                "pain behind the eyes", "back pain", "constipation", "abdominal pain", "diarrhoea",
-                                "mild fever", "yellow urine", "yellowing of eyes", "acute liver failure",
-                                "fluid overload",
-                                "swelling of stomach", "swelled lymph nodes", "malaise", "blurred and distorted vision",
-                                "phlegm", "throat irritation", "redness of eyes", "sinus pressure", "runny nose",
-                                "congestion",
-                                "chest pain", "weakness in limbs", "fast heart rate", "pain during bowel movements",
-                                "pain in anal region", "bloody stool", "irritation in anus", "neck pain", "dizziness",
-                                "cramps",
-                                "bruising", "obesity", "swollen legs", "swollen blood vessels", "puffy face and eyes",
-                                "enlarged thyroid", "brittle nails", "swollen extremeties", "excessive hunger",
-                                "extra marital contacts", "drying and tingling lips", "slurred speech", "knee pain",
-                                "hip joint pain", "muscle weakness", "stiff neck", "swelling joints",
-                                "movement stiffness",
-                                "spinning movements", "loss of balance", "unsteadiness", "weakness of one body side",
-                                "loss of smell", "bladder discomfort", "foul smell ofurine", "continuous feel of urine",
-                                "passage of gases", "internal itching", "toxic look (typhos)", "depression",
-                                "irritability",
-                                "muscle pain", "altered sensorium", "red spots over body", "belly pain",
-                                "abnormal menstruation", "dischromic patches", "watering from eyes",
-                                "increased appetite",
-                                "polyuria", "family history", "mucoid sputum", "rusty sputum", "lack of concentration",
-                                "visual disturbances", "receiving blood transfusion", "receiving unsterile injections",
-                                "coma", "stomach bleeding", "distention of abdomen", "history of alcohol consumption",
-                                "blood in sputum", "prominent veins on calf", "palpitations", "painful walking",
-                                "pus filled pimples", "blackheads", "scurring", "skin peeling", "silver like dusting",
-                                "small dents in nails", "inflammatory nails", "blister", "red sore around nose",
-                                "yellow crust ooze"]
-                symptom_str = ",".join(symptom_list)
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(symptom_str), size_hint=(.80, None)))
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please enter the given relevant symptom as above provided without space between comma. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
-
-
-        elif tag == 'datetime':
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text=now.strftime("%A \n%d %B %Y \n%H:%M:%S"), size_hint=(.65, None)))
-        elif len(message) == 0 or tag != ints[0]['intent']:
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text="What are you going to ask?", size_hint=(.65, None)))
-        elif tag == 'goodbye':
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
-            url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
-            label = Label(text="Click here to give us feedback", size_hint=(.65, None), color=(0, 0, 1, 1), underline=True)
-            label.url = url
-            screen_manager.get_screen('content').chat_list.add_widget(label)
-        else:
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
 
 
 
-        screen_manager.get_screen('content').text_input.text = ""
+            screen_manager.get_screen('content').text_input.text = ""
 
         mydb.commit()
 
