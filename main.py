@@ -120,12 +120,12 @@ class parentApp(App):
             # sql = "DELETE FROM users WHERE email = 'fucai99@gmail.com'"
             # c.execute(sql)
 
-            sql2 = "SELECT * FROM users"
-            c.execute(sql2)
-            result = c.fetchall()
-
-            for x in result:
-                print(x)
+            # sql2 = "SELECT * FROM users"
+            # c.execute(sql2)
+            # result = c.fetchall()
+            #
+            # for x in result:
+            #     print(x)
 
             # sql3 = "SELECT * FROM results"
             # c.execute(sql3)
@@ -143,8 +143,8 @@ class parentApp(App):
             #c.execute("SELECT * FROM users")
             #print(c.description)
 
-            # c.execute("""CREATE TABLE IF NOT EXISTS users (name VARCHAR(255), age INT(10), weight INT(10), height INT(10), gender VARCHAR(255), email VARCHAR(255), phone VARCHAR(255), password VARCHAR(255), confirm_password VARCHAR(255))""")
-            # c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255), score VARCHAR(255))""")
+            c.execute("""CREATE TABLE IF NOT EXISTS users (name VARCHAR(255), age INT(10), weight INT(10), height INT(10), gender VARCHAR(255), email VARCHAR(255), phone VARCHAR(255), password VARCHAR(255), confirm_password VARCHAR(255))""")
+            c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255), score VARCHAR(255))""")
 
             # c.execute("SHOW TABLES")
             # for x in c:
