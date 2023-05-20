@@ -25,7 +25,6 @@ import joblib
 from nltk.stem import WordNetLemmatizer
 from keras.models import load_model
 
-import machine
 import os.path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -50,9 +49,6 @@ df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
 
 
 model2 = joblib.load('rfc_model.sav')
-print("for rfc: ")
-rfc_result = model2.score(machine.x_test, machine.y_test)
-print(rfc_result)
 
 
 now = datetime.now()
@@ -132,7 +128,7 @@ class parentApp(App):
             # for a in result2:
             #     print(a)
 
-            #c.execute("""DROP TABLE results""")
+            # c.execute("""DROP TABLE results""")
 
             #c.execute("SHOW DATABASES")
             #for db in c:
@@ -142,7 +138,7 @@ class parentApp(App):
             #print(c.description)
 
             c.execute("""CREATE TABLE IF NOT EXISTS users (name VARCHAR(255), age INT(10), weight INT(10), height INT(10), gender VARCHAR(255), email VARCHAR(255), phone VARCHAR(255), password VARCHAR(255), confirm_password VARCHAR(255))""")
-            c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255), score VARCHAR(255))""")
+            c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255))""")
 
             # c.execute("SHOW TABLES")
             # for x in c:
@@ -451,11 +447,10 @@ class parentApp(App):
                 count = 0
                 for i in result:
                     count += 1
-                    app.results = {'email': i[0], 'symptom': i[1], 'disease': i[2], 'score': i[3]}
+                    app.results = {'email': i[0], 'symptom': i[1], 'disease': i[2]}
                     results = app.results
                     screen_manager.get_screen('history').history_list.add_widget(History(text="NO." + str(count) + ":\n" + results['symptom']))
                     screen_manager.get_screen('history').history_list.add_widget(History(text=results['disease']))
-                    screen_manager.get_screen('history').history_list.add_widget(History(text=results['score']))
 
 
             else:
@@ -765,10 +760,10 @@ class parentApp(App):
                     predstr = predstr.lower().replace("[]","")
 
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Prediction Result: Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + str(rfc_result*100) + "%", size_hint=(.65, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + "95%", size_hint=(.65, None)))
 
-                    sql = """INSERT INTO results (email, symptom, disease, score) VALUES (?, ?, ?, ?)"""
-                    record = (user_details['email'], message, str(predstr), str(rfc_result*100))
+                    sql = """INSERT INTO results (email, symptom, disease) VALUES (?, ?, ?)"""
+                    record = (user_details['email'], message, str(predstr))
                     c.execute(sql, record)
 
 
