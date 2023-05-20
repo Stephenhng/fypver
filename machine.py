@@ -1,7 +1,6 @@
 import pandas as pd
 import pickle
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score
 from sklearn import model_selection
 
 df = pd.read_csv('Data/dataset.csv')

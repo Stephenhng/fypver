@@ -9,7 +9,6 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from datetime import datetime
-from sklearn.model_selection import cross_val_score
 import csv
 import warnings
 import pandas as pd
@@ -54,8 +53,7 @@ model2 = joblib.load('rfc_model.sav')
 print("for rfc: ")
 rfc_result = model2.score(machine.x_test, machine.y_test)
 print(rfc_result)
-rfc_score = cross_val_score(model2, machine.x_test, machine.y_test, cv=10)
-print(rfc_score)
+
 
 now = datetime.now()
 
@@ -766,7 +764,7 @@ class parentApp(App):
                     predstr = ",".join(preds)
                     predstr = predstr.lower().replace("[]","")
 
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Prediction Result: Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + str(rfc_result*100) + "%", size_hint=(.65, None)))
 
                     sql = """INSERT INTO results (email, symptom, disease, score) VALUES (%s, %s, %s, %s)"""
@@ -814,7 +812,7 @@ class parentApp(App):
                                     "yellow crust ooze"]
                     symptom_str = ",".join(symptom_list)
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(symptom_str), size_hint=(.80, None)))
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please enter the given relevant symptom as above provided without space between comma. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Use the given relevant symptom as above provided without space between comma only. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
 
 
             elif tag == 'datetime':

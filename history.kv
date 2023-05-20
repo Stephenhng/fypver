@@ -75,10 +75,10 @@ Screen:
                             root.manager.transition.direction = "right"
                         Image:
                             source:"home.png"
-                            size: self.size
+                            size_hint: .2, .2
                             keep_ratio: True
                             allow_stretch: False
-                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            y: self.parent.y - 0.4* self.parent.height
                             x: self.parent.x
                             width: self.parent.width
 
@@ -90,10 +90,10 @@ Screen:
                             app.history()
                         Image:
                             source:"document.png"
-                            size: self.size
+                            size_hint: .2, .2
                             keep_ratio: True
                             allow_stretch: False
-                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            y: self.parent.y - 0.4* self.parent.height
                             x: self.parent.x
                             width: self.parent.width
 
@@ -104,10 +104,10 @@ Screen:
                             app.profile()
                         Image:
                             source:"person.png"
-                            size: self.size
+                            size_hint: .2, .2
                             keep_ratio: True
                             allow_stretch: False
-                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            y: self.parent.y - 0.4* self.parent.height
                             x: self.parent.x
                             width: self.parent.width
 
@@ -117,9 +117,9 @@ Screen:
                             root.manager.transition.direction = "left"
                         Image:
                             source:"settings.png"
-                            size: self.size
+                            size_hint: .2, .2
                             keep_ratio: True
                             allow_stretch: False
-                            y: self.parent.y + .4* self.parent.height -.5 * self.parent.width/self.image_ratio
+                            y: self.parent.y - 0.4* self.parent.height
                             x: self.parent.x
                             width: self.parent.width
