@@ -767,7 +767,7 @@ class parentApp(App):
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Prediction Result: Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + str(rfc_result*100) + "%", size_hint=(.65, None)))
 
-                    sql = """INSERT INTO results (email, symptom, disease, score) VALUES (%s, %s, %s, %s)"""
+                    sql = """INSERT INTO results (email, symptom, disease, score) VALUES (?, ?, ?, ?)"""
                     record = (user_details['email'], message, str(predstr), str(rfc_result*100))
                     c.execute(sql, record)
 
