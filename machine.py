@@ -1,6 +1,7 @@
 import pandas as pd
 import pickle
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
 from sklearn import model_selection
 
 df = pd.read_csv('Data/dataset.csv')
@@ -35,6 +36,13 @@ x_train, x_test, y_train, y_test = model_selection.train_test_split(data, labels
 
 model2 = RandomForestClassifier()
 model2.fit(x_train,y_train)
+
+print("for rfc: ")
+rfc_result = model2.score(x_test, y_test)
+print(rfc_result)
+rfc_score = cross_val_score(model2, x_test, y_test, cv=10)
+print(rfc_score)
+
 
 filename = 'rfc_model.sav'
 pickle.dump(model2, open(filename,'wb'))

@@ -3,6 +3,7 @@ import json
 import pickle
 import numpy as np
 import nltk
+import tensorflow as tf
 
 from nltk.stem import WordNetLemmatizer
 from keras.models import Sequential
@@ -87,5 +88,13 @@ sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
 hist = model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=5, verbose=1)
-model.save('chatbotmodel.h5', hist)
+# model.save('chatbotmodel.h5', hist)
+
+# Convert the model to TensorFlow Lite format
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+# Save the TensorFlow Lite model to a file
+with open('model.tflite', 'wb') as file:
+    file.write(tflite_model)
 print("Done")

@@ -21,9 +21,9 @@ import numpy as np
 import nltk
 import webbrowser
 import joblib
+from model import TensorFlowModel
 
 from nltk.stem import WordNetLemmatizer
-from keras.models import load_model
 
 import os.path
 
@@ -43,7 +43,9 @@ precaution_intents = json.loads(open('precaution_intents.json').read())
 
 words = pickle.load(open('words.pkl', 'rb'))
 classes = pickle.load(open('classes.pkl', 'rb'))
-model = load_model('chatbotmodel.h5')
+
+model = TensorFlowModel()
+model.load(os.path.join(os.getcwd(), 'model.tflite'))
 
 df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
 
@@ -595,7 +597,7 @@ class parentApp(App):
 
     def predict_class(self, sentence):
         bow = self.bag_of_words(sentence)
-        res = model.predict(np.array([bow]))[0]
+        res = model.pred(np.array([bow]))[0]
         ERROR_THRESHOLD = 0.20
         result = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
 
@@ -647,8 +649,6 @@ class parentApp(App):
             ints = self.predict_class(message)
             res = self.response(ints, intents, description_intents, precaution_intents)
             tag = ints[0]['intent']
-
-
 
             if  screen_manager.get_screen('content').text_input != "":
                 if len(message) < 6:
@@ -760,7 +760,7 @@ class parentApp(App):
                     predstr = predstr.lower().replace("[]","")
 
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Prediction Result: Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + "95%", size_hint=(.65, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + "average 95%", size_hint=(.65, None)))
 
                     sql = """INSERT INTO results (email, symptom, disease) VALUES (?, ?, ?)"""
                     record = (user_details['email'], message, str(predstr))
@@ -807,7 +807,7 @@ class parentApp(App):
                                     "yellow crust ooze"]
                     symptom_str = ",".join(symptom_list)
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text=str(symptom_str), size_hint=(.80, None)))
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Use the given relevant symptom as above provided without space between comma only. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
+                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Use the given relevant symptom as above provided without space between comma only for prediction. Eg: Itching (Not itchy/itchings)", size_hint=(.80, None)))
 
 
             elif tag == 'datetime':
