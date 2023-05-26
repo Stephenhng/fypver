@@ -378,6 +378,15 @@ class parentApp(App):
                 popup = Popup(title = 'Error', content = layout)
                 popup.open()
                 closeButton.bind(on_press = popup.dismiss)
+            elif len(password)<8 or len(confirm_password)<8:
+                layout = GridLayout(cols = 1,size_hint = (.6,.3), pos_hint = {"x":.2,"top": .9}, padding = 10)
+                popupLabel = Label(text = "Too short for password. Please enter\nat least 8 characters.")
+                closeButton = Button(text = "Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title = 'Error', content = layout)
+                popup.open()
+                closeButton.bind(on_press = popup.dismiss)
             elif username == "" or age == "" or weight == "" or height == "" or gender == "" or email == "" or phone == "" or password == "" or confirm_password == "":
                 layout = GridLayout(cols = 1, size_hint = (.6, .2), pos_hint = {"x": .2, "top": .9}, padding = 10)
                 popupLabel = Label(text = "Please fill all the blank to register a new account")
