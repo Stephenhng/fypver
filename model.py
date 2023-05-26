@@ -38,6 +38,7 @@ if platform == 'android':
 
         def pred(self, x):
             # assumes one input and one output for now
+            x = x.astype(np.float32)
             input = ByteBuffer.wrap(x.tobytes())
             output = TensorBuffer.createFixedSize(self.output_shape,
                                                   self.output_type)

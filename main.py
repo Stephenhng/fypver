@@ -20,7 +20,6 @@ import pickle
 import numpy as np
 import nltk
 import webbrowser
-import joblib
 from model import TensorFlowModel
 
 from nltk.stem import WordNetLemmatizer
@@ -50,7 +49,7 @@ model.load(os.path.join(os.getcwd(), 'model.tflite'))
 df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
 
 
-model2 = joblib.load('rfc_model.sav')
+model2 = pickle.load(open('rfc_model.pkl', 'rb'))
 
 
 now = datetime.now()

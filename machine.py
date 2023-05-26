@@ -44,6 +44,9 @@ rfc_score = cross_val_score(model2, x_test, y_test, cv=10)
 print(rfc_score)
 
 
-filename = 'rfc_model.sav'
+filename = 'rfc_model.pkl'
 pickle.dump(model2, open(filename,'wb'))
+
+
+
 print("Done")
