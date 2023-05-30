@@ -31,6 +31,7 @@ Screen:
                 hint_text:'Enter Email'
                 pos_hint: {'center_x': 0.5, 'center_y': 0.705}
                 size_hint: .8, .2
+                foreground_color: (25/255, 25/255, 112/255, 1)
 
         GridLayout:
             cols:3
@@ -55,11 +56,16 @@ Screen:
                 pos_hint: {'center_x': 0.5, 'center_y': 0.705}
                 size_hint: .8, .2
                 password: True
+                foreground_color: (25/255, 25/255, 112/255, 1)
 
             Button:
                 id: btn_log
                 size_hint: .2,.1
                 text: "Show"
+                background_down: ''
+                background_color: (240/255, 230/255, 140/255, 1)
+                border: (1, 1, 1, 1)
+                border_color: (255/255, 255/255, 255/255, 1)
                 on_press: app.toggle_visibility()
 
         Button:
