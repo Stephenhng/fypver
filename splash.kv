@@ -1,0 +1,33 @@
+<CircularProgressBar>
+    canvas.before:
+        Color:
+            rgba: root.bar_color + [0.3]
+        Line:
+            width: root.bar_width
+            ellipse: (self.x, self.y, self.width, self.height, 0, 360)
+    canvas.after:
+        Color:
+            rgb: root.bar_color
+        Line:
+            width: root.bar_width
+            ellipse: (self.x, self.y, self.width, self.height, 0, root.set_value*3.6)
+    Label:
+        text: root.text
+        font_size: "20sp"
+        pos_hint: {"center_x": .5, "center_y": .5}
+        halign: "center"
+        color: root.bar_color
+
+
+Screen:
+    name: "splash"
+
+    FloatLayout:
+        canvas:
+            Color:
+                rgb: (255/255,192/255,203/255,1)
+        CircularProgressBar:
+            size_hint: None, None
+            size: 200, 200
+            pos_hint: {"center_x": .5, "center_y": .5}
+            value: 100
