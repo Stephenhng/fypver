@@ -105,7 +105,6 @@ class CircularProgressBar(AnchorLayout):
 
 
 class parentApp(App):
-
     passwd = ObjectProperty(None)
     confirm_passwd = ObjectProperty(None)
 
