@@ -172,30 +172,27 @@ class parentApp(App):
 
         return screen_manager
 
-
     def disease_description(self):
-        with open('MasterData/Symptom_Description.csv','r') as csv_file:
+        with open('MasterData/Symptom_Description.csv', 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             next(csv_reader)
             _description = {"description_intents": []}
             for row in csv_reader:
-                _description["description_intents"].append({"tag":"description_" + row[0].replace(' ','_'), "patterns":[row[0].lower(), row[0], "what is " + row[0], "tell me about " + row[0], "Anything on " + row[0], "how about " + row[0]] , "responses":[row[1]]})
+                _description["description_intents"].append({"tag": "description_" + row[0].replace(' ', '_'), "patterns": [row[0].lower(), row[0], "what is " + row[0], "tell me about " + row[0], "Anything on " + row[0], "how about " + row[0]], "responses": [row[1]]})
 
         with open('description_intents.json', 'w') as json_file:
-            json.dump(_description, json_file,indent=2)
-
+            json.dump(_description, json_file, indent=2)
 
     def disease_precaution(self):
-        with open('MasterData/Symptom_Precaution.csv','r') as csv_file:
+        with open('MasterData/Symptom_Precaution.csv', 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             next(csv_reader)
-            _precaution = {"precaution_intents":[]}
+            _precaution = {"precaution_intents": []}
             for row in csv_reader:
-                _precaution["precaution_intents"].append({"tag":"precaution_" + row[0].replace(' ','_'), "patterns":["medicine for " + row[0], "Recover of " + row[0], "treatment for " + row[0], "I am getting " + row[0], "what is the precaution for " + row[0], "how to avoid " + row[0], "how to prevent " + row[0]] , "responses":[row[1],row[2],row[3],row[4]]})
+                _precaution["precaution_intents"].append({"tag": "precaution_" + row[0].replace(' ', '_'), "patterns": ["medicine for " + row[0], "Recover of " + row[0], "treatment for " + row[0], "I am getting " + row[0], "what is the precaution for " + row[0], "how to avoid " + row[0], "how to prevent " + row[0]], "responses": [row[1], row[2], row[3], row[4]]})
 
         with open('precaution_intents.json', 'w') as json_file:
-            json.dump(_precaution, json_file,indent=2)
-
+            json.dump(_precaution, json_file, indent=2)
 
     def log_in(self):
         email = screen_manager.get_screen('main').email.text
@@ -224,7 +221,7 @@ class parentApp(App):
                 self.root.transition.direction = "left"
                 self.root.current = "content"
                 app = App.get_running_app()
-                app.user_details = {'name': result[0], 'age': result[1], 'weight': result[2], 'height': result[3], 'gender': result[4], 'email': result[5], 'phone': result[6], 'password': result[7], 'confirm_password':result[8]}
+                app.user_details = {'name': result[0], 'age': result[1], 'weight': result[2], 'height': result[3], 'gender': result[4], 'email': result[5], 'phone': result[6], 'password': result[7], 'confirm_password': result[8]}
             else:
                 layout = GridLayout(cols=1, size_hint=(.6, .3), pos_hint={"x": .2, "top": .9}, padding=10)
                 popupLabel = Label(text="Email does not register yet\nor\nEmail or password was wrong ")
@@ -330,7 +327,7 @@ class parentApp(App):
                 closeButton.bind(on_press=popup.dismiss)
             else:
                 sql2 = "UPDATE users SET password = %s , confirm_password = %s WHERE email = %s"
-                var = (fg_passwd, fg_confirm_passwd , fg_email)
+                var = (fg_passwd, fg_confirm_passwd, fg_email)
                 c.execute(sql2, var)
 
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
@@ -397,7 +394,7 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press = popup.dismiss)
             elif password != confirm_password:
-                layout = GridLayout(cols = 1,size_hint = (.6,.2), pos_hint = {"x":.2,"top": .9}, padding = 10)
+                layout = GridLayout(cols = 1, size_hint = (.6, .2), pos_hint = {"x": .2, "top": .9}, padding = 10)
                 popupLabel = Label(text = "Password and Confirm Password must same")
                 closeButton = Button(text = "Close to continue")
                 layout.add_widget(popupLabel)
@@ -405,8 +402,8 @@ class parentApp(App):
                 popup = Popup(title = 'Error', content = layout)
                 popup.open()
                 closeButton.bind(on_press = popup.dismiss)
-            elif len(password)<8 or len(confirm_password)<8:
-                layout = GridLayout(cols = 1,size_hint = (.6,.3), pos_hint = {"x":.2,"top": .9}, padding = 10)
+            elif len(password) < 8 or len(confirm_password) < 8:
+                layout = GridLayout(cols = 1, size_hint = (.6, .3), pos_hint = {"x": .2, "top": .9}, padding = 10)
                 popupLabel = Label(text = "Too short for password. Please enter\nat least 8 characters.")
                 closeButton = Button(text = "Close to continue")
                 layout.add_widget(popupLabel)
@@ -663,7 +660,7 @@ class parentApp(App):
             res = self.response(ints, intents, description_intents, precaution_intents)
             tag = ints[0]['intent']
 
-            if  screen_manager.get_screen('content').text_input != "":
+            if screen_manager.get_screen('content').text_input != "":
                 if len(message) < 6:
                     size = .22, None
                     halign = "center"
@@ -694,7 +691,7 @@ class parentApp(App):
             if tag == 'symptoms':
 
                 list_m = message.split(',')
-                psymptoms = [message.replace(' ','_') for message in list_m]
+                psymptoms = [message.replace(' ', '_') for message in list_m]
 
                 a = np.array(df1["Symptom"])
                 b = np.array(df1["weight"])
@@ -763,11 +760,11 @@ class parentApp(App):
 
                 try:
                     array_symptom = np.array(psymptoms)
-                    array_symptom_2d = array_symptom.reshape(1,-1)
+                    array_symptom_2d = array_symptom.reshape(1, -1)
 
                     preds = model2.predict(array_symptom_2d)
                     predstr = ",".join(preds)
-                    predstr = predstr.lower().replace("[]","")
+                    predstr = predstr.lower().replace("[]", "")
 
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Prediction Result: Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
                     screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + "average 95%", size_hint=(.65, None)))
@@ -804,6 +801,7 @@ class parentApp(App):
         mydb.commit()
 
         mydb.close()
+
 
 if __name__ == "__main__":
     parentApp().run()
