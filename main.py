@@ -45,7 +45,6 @@ model = TensorFlowModel()
 model.load(os.path.join(os.getcwd(), 'model.tflite'))
 
 df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
-model2 = pickle.load(open('rfc_model.pkl', 'rb'))
 
 now = datetime.now()
 
@@ -992,17 +991,10 @@ class parentApp(App):
 
             try:
                 url = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
-                self.request = UrlRequest(url=url, on_success=self.res, ca_file=cfi.where(), verify=True)
-
+                self.request = UrlRequest(url=url, on_success=self.res, on_failure=self.fail, ca_file=cfi.where(), verify=True)
             except Exception:
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Use the given relevant symptom without space between comma only for prediction.", size_hint=(.80, None)))
-                screen_manager.get_screen('content').chat_list.add_widget(
-                    Response(text="For Example: muscle weakness,stiff neck,swelling join,movement stiffness",
-                             size_hint=(.80, None)))
-                url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
-                label = Label(text="See More Symptom", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
-                label.url = url
-                screen_manager.get_screen('content').chat_list.add_widget(label)
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please enter more than one symptoms.", size_hint=(.80, None)))
+
 
         elif tag == 'datetime':
             screen_manager.get_screen('content').chat_list.add_widget(Response(text=now.strftime("%A \n%d %B %Y \n%H:%M:%S"), size_hint=(.65, None)))
@@ -1042,6 +1034,22 @@ class parentApp(App):
         mydb.commit()
 
         mydb.close()
+
+    def fail(self, *args):
+        self.data_error = self.request.result
+        print(self.data_error)
+        screen_manager.get_screen('content').chat_list.add_widget(
+            Response(text="Enter more than one symptoms.", size_hint=(.80, None)))
+        screen_manager.get_screen('content').chat_list.add_widget(
+            Response(text="Use relevant symptom without space between comma only for prediction.",
+                     size_hint=(.80, None)))
+        screen_manager.get_screen('content').chat_list.add_widget(
+            Response(text="For Example: muscle weakness,stiff neck,swelling join,movement stiffness",
+                     size_hint=(.80, None)))
+        url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
+        label = Label(text="See More Symptoms", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
+        label.url = url
+        screen_manager.get_screen('content').chat_list.add_widget(label)
 
 
 if __name__ == "__main__":
