@@ -10,6 +10,7 @@ from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager
+from kivy.network.urlrequest import UrlRequest
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty, ListProperty
 from datetime import datetime
 from model import TensorFlowModel
@@ -26,6 +27,7 @@ import numpy as np
 import nltk
 import webbrowser
 import os.path
+import certifi as cfi
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "disease.db")
@@ -41,9 +43,10 @@ classes = pickle.load(open('classes.pkl', 'rb'))
 
 model = TensorFlowModel()
 model.load(os.path.join(os.getcwd(), 'model.tflite'))
-df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
 
+df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
 model2 = pickle.load(open('rfc_model.pkl', 'rb'))
+
 now = datetime.now()
 
 
@@ -159,7 +162,7 @@ class parentApp(App):
             #print(c.description)
 
             c.execute("""CREATE TABLE IF NOT EXISTS users (name VARCHAR(255), age INT(10), weight INT(10), height INT(10), gender VARCHAR(255), email VARCHAR(255), phone VARCHAR(255), password VARCHAR(255), confirm_password VARCHAR(255))""")
-            c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), symptom VARCHAR(255), disease VARCHAR(255))""")
+            c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), disease VARCHAR(255))""")
 
             # c.execute("SHOW TABLES")
             # for x in c:
@@ -230,7 +233,6 @@ class parentApp(App):
                 popup = Popup(title='Error', content=layout)
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
-
 
         mydb.commit()
 
@@ -338,7 +340,6 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_main)
 
-
         mydb.commit()
 
         mydb.close()
@@ -366,13 +367,11 @@ class parentApp(App):
 
 
         with sqlite3.connect(db_path) as mydb:
-
             c = mydb.cursor()
 
             sql2 = "SELECT name FROM users"
             c.execute(sql2)
             result = c.fetchall()
-
 
             if (email,) in result:
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
@@ -411,7 +410,6 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press = popup.dismiss)
             else:
-
                 pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
                 match = re.match(pattern, email)
                 if match:
@@ -456,12 +454,10 @@ class parentApp(App):
     def history(self):
         screen_manager.get_screen('history').history_list.clear_widgets()
         with sqlite3.connect(db_path) as mydb:
-
             c = mydb.cursor()
 
             app = App.get_running_app()
             user_details = app.user_details
-
 
             sql = f"SELECT * FROM results WHERE email = '{user_details['email']}'"
             c.execute(sql)
@@ -471,11 +467,10 @@ class parentApp(App):
                 count = 0
                 for i in result:
                     count += 1
-                    app.results = {'email': i[0], 'symptom': i[1], 'disease': i[2]}
+                    app.results = {'email': i[0], 'disease': i[1]}
                     results = app.results
-                    screen_manager.get_screen('history').history_list.add_widget(History(text="NO." + str(count) + ":\n" + results['symptom']))
+                    screen_manager.get_screen('history').history_list.add_widget(History(text="NO." + str(count) + ": "))
                     screen_manager.get_screen('history').history_list.add_widget(History(text=results['disease']))
-
 
             else:
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
@@ -487,13 +482,11 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss, on_release=self.go_to_content)
 
-
         mydb.commit()
 
         mydb.close()
 
     def profile(self):
-
         app = App.get_running_app()
         user_details = app.user_details
 
@@ -526,12 +519,10 @@ class parentApp(App):
 
 
         with sqlite3.connect(db_path) as mydb:
-
             c = mydb.cursor()
 
             app = App.get_running_app()
             user_details = app.user_details
-
 
             if up_username == "" or up_age == "" or up_weight == "" or up_height == "" or up_gender == "" or up_phone == "":
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
@@ -543,7 +534,6 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
             else:
-
                 sql2 = (f"UPDATE users SET name = %s, age = %s, weight = %s, height = %s, gender = %s, phone = %s WHERE email = '{user_details['email']}'")
                 var = (up_username, up_age, up_weight, up_height, up_gender, up_phone)
                 c.execute(sql2, var)
@@ -556,7 +546,6 @@ class parentApp(App):
                 popup = Popup(title='Edit/Update Details', content=layout)
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
-
 
         mydb.commit()
 
@@ -646,156 +635,409 @@ class parentApp(App):
     print("Bot is running!")
 
     def send(self):
-        global size, halign, valign
+        global size, halign, valign, symptom1, symptom2, symptom3, symptom4, symptom5, symptom6, symptom7, symptom8, symptom9, symptom10, symptom11, symptom12, symptom13, symptom14, symptom15, symptom16, symptom17
+
+        message = screen_manager.get_screen('content').text_input.text
+        ints = self.predict_class(message)
+        res = self.response(ints, intents, description_intents, precaution_intents)
+        tag = ints[0]['intent']
+
+        if screen_manager.get_screen('content').text_input != "":
+            if len(message) < 6:
+                size = .22, None
+                halign = "center"
+                valign = "middle"
+            elif len(message) < 11:
+                size = .32, None
+                halign = "center"
+                valign = "middle"
+            elif len(message) < 16:
+                size = .45, None
+                halign = "center"
+                valign = "middle"
+            elif len(message) < 21:
+                size = .58, None
+                halign = "center"
+                valign = "middle"
+            elif len(message) < 26:
+                size = .71, None
+                halign = "center"
+                valign = "middle"
+            else:
+                size = .77, None
+                halign = "left"
+                valign = "middle"
+
+        screen_manager.get_screen('content').chat_list.add_widget(Command(text=message, size_hint=size, halign=halign))
+
+        if tag == 'symptoms':
+            list_m = message.split(',')
+            psymptoms = [message.replace(' ', '_') for message in list_m]
+
+            a = np.array(df1["Symptom"])
+            b = np.array(df1["weight"])
+
+            for j in range(len(psymptoms)):
+                for k in range(len(a)):
+                    if psymptoms[j] == a[k]:
+                        psymptoms[j] = b[k]
+
+
+            if len(psymptoms) < 2:
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Please enter at least two symptoms for prediction.")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Symptom Quantity', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+            elif len(psymptoms) == 2:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = 0
+                symptom4 = 0
+                symptom5 = 0
+                symptom6 = 0
+                symptom7 = 0
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 3:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = 0
+                symptom5 = 0
+                symptom6 = 0
+                symptom7 = 0
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 4:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = 0
+                symptom6 = 0
+                symptom7 = 0
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 5:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = 0
+                symptom7 = 0
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 6:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = 0
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 7:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 8:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 9:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 10:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 11:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 12:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = psymptoms[11]
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 13:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = psymptoms[11]
+                symptom13 = psymptoms[12]
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 14:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = psymptoms[11]
+                symptom13 = psymptoms[12]
+                symptom14 = psymptoms[13]
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 15:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = psymptoms[11]
+                symptom13 = psymptoms[12]
+                symptom14 = psymptoms[13]
+                symptom15 = psymptoms[14]
+                symptom16 = 0
+                symptom17 = 0
+            elif len(psymptoms) == 16:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = psymptoms[11]
+                symptom13 = psymptoms[12]
+                symptom14 = psymptoms[13]
+                symptom15 = psymptoms[14]
+                symptom16 = psymptoms[15]
+                symptom17 = 0
+            elif len(psymptoms) == 17:
+                symptom1 = psymptoms[0]
+                symptom2 = psymptoms[1]
+                symptom3 = psymptoms[2]
+                symptom4 = psymptoms[3]
+                symptom5 = psymptoms[4]
+                symptom6 = psymptoms[5]
+                symptom7 = psymptoms[6]
+                symptom8 = psymptoms[7]
+                symptom9 = psymptoms[8]
+                symptom10 = psymptoms[9]
+                symptom11 = psymptoms[10]
+                symptom12 = psymptoms[11]
+                symptom13 = psymptoms[12]
+                symptom14 = psymptoms[13]
+                symptom15 = psymptoms[14]
+                symptom16 = psymptoms[15]
+                symptom17 = psymptoms[16]
+            elif len(psymptoms) > 17:
+                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+                popupLabel = Label(text="Exceeded the quantity of symptoms.")
+                closeButton = Button(text="Close to continue")
+                layout.add_widget(popupLabel)
+                layout.add_widget(closeButton)
+                popup = Popup(title='Symptom Quantity', content=layout)
+                popup.open()
+                closeButton.bind(on_press=popup.dismiss)
+
+            try:
+                url = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
+                self.request = UrlRequest(url=url, on_success=self.res, ca_file=cfi.where(), verify=True)
+
+            except Exception:
+                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Use the given relevant symptom without space between comma only for prediction.", size_hint=(.80, None)))
+                screen_manager.get_screen('content').chat_list.add_widget(
+                    Response(text="For Example: muscle weakness,stiff neck,swelling join,movement stiffness",
+                             size_hint=(.80, None)))
+                url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
+                label = Label(text="See More Symptom", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
+                label.url = url
+                screen_manager.get_screen('content').chat_list.add_widget(label)
+
+        elif tag == 'datetime':
+            screen_manager.get_screen('content').chat_list.add_widget(Response(text=now.strftime("%A \n%d %B %Y \n%H:%M:%S"), size_hint=(.65, None)))
+        elif len(message) == 0 or tag != ints[0]['intent']:
+            screen_manager.get_screen('content').chat_list.add_widget(Response(text="What are you going to ask?", size_hint=(.65, None)))
+        elif tag == 'goodbye':
+            screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
+            url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
+            label = Label(text="Click here to give us feedback", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
+            label.url = url
+            screen_manager.get_screen('content').chat_list.add_widget(label)
+        else:
+            screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
+
+        screen_manager.get_screen('content').text_input.text = ""
+
+
+    def res(self, *args):
+        app = App.get_running_app()
+        user_details = app.user_details
 
         with sqlite3.connect(db_path) as mydb:
             c = mydb.cursor()
 
-            app = App.get_running_app()
-            user_details = app.user_details
+            self.data = self.request.result
+            ans = self.data
+            screen_manager.get_screen('content').chat_list.add_widget(
+                Response(text="Prediction Result: Disease " + ans['prediction'] + " you got infected.",
+                         size_hint=(.65, None)))
+            screen_manager.get_screen('content').chat_list.add_widget(
+                Response(text="Average score for this prediction model: " + "average 95%", size_hint=(.65, None)))
 
-            message = screen_manager.get_screen('content').text_input.text
-            ints = self.predict_class(message)
-            res = self.response(ints, intents, description_intents, precaution_intents)
-            tag = ints[0]['intent']
-
-            if screen_manager.get_screen('content').text_input != "":
-                if len(message) < 6:
-                    size = .22, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(message) < 11:
-                    size = .32, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(message) < 16:
-                    size = .45, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(message) < 21:
-                    size = .58, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(message) < 26:
-                    size = .71, None
-                    halign = "center"
-                    valign = "middle"
-                else:
-                    size = .77, None
-                    halign = "left"
-                    valign = "middle"
-
-            screen_manager.get_screen('content').chat_list.add_widget(Command(text=message, size_hint=size, halign=halign))
-
-            if tag == 'symptoms':
-
-                list_m = message.split(',')
-                psymptoms = [message.replace(' ', '_') for message in list_m]
-
-                a = np.array(df1["Symptom"])
-                b = np.array(df1["weight"])
-
-                for j in range(len(psymptoms)):
-                    for k in range(len(a)):
-                        if psymptoms[j] == a[k]:
-                            psymptoms[j] = b[k]
-
-                if len(psymptoms) < 2:
-                    layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                    popupLabel = Label(text="Please enter at least two symptoms for prediction.")
-                    closeButton = Button(text="Close to continue")
-                    layout.add_widget(popupLabel)
-                    layout.add_widget(closeButton)
-                    popup = Popup(title='Symptom Quantity', content=layout)
-                    popup.open()
-                    closeButton.bind(on_press=popup.dismiss)
-                elif len(psymptoms) == 2:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 3:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 4:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 5:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 6:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 7:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 8:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 9:
-                    nulls = [0, 0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 10:
-                    nulls = [0, 0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 11:
-                    nulls = [0, 0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 12:
-                    nulls = [0, 0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 13:
-                    nulls = [0, 0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 14:
-                    nulls = [0, 0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 15:
-                    nulls = [0, 0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 16:
-                    nulls = [0]
-                    psymptoms.extend(nulls)
-                elif len(psymptoms) == 17:
-                    pass
-
-                try:
-                    array_symptom = np.array(psymptoms)
-                    array_symptom_2d = array_symptom.reshape(1, -1)
-
-                    preds = model2.predict(array_symptom_2d)
-                    predstr = ",".join(preds)
-                    predstr = predstr.lower().replace("[]", "")
-
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Prediction Result: Disease " + str(predstr) + " you got infected.", size_hint=(.65, None)))
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Average score for this prediction model: " + "average 95%", size_hint=(.65, None)))
-
-                    sql = """INSERT INTO results (email, symptom, disease) VALUES (?, ?, ?)"""
-                    record = (user_details['email'], message, str(predstr))
-                    c.execute(sql, record)
-
-                except Exception:
-                    screen_manager.get_screen('content').chat_list.add_widget(Response(text="Use the given relevant symptom without space between comma only for prediction.", size_hint=(.80, None)))
-                    screen_manager.get_screen('content').chat_list.add_widget(
-                        Response(text="For Example: muscle weakness,stiff neck,swelling join,movement stiffness",
-                                 size_hint=(.80, None)))
-                    url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
-                    label = Label(text="See More Symptom", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
-                    label.url = url
-                    screen_manager.get_screen('content').chat_list.add_widget(label)
-
-            elif tag == 'datetime':
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text=now.strftime("%A \n%d %B %Y \n%H:%M:%S"), size_hint=(.65, None)))
-            elif len(message) == 0 or tag != ints[0]['intent']:
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text="What are you going to ask?", size_hint=(.65, None)))
-            elif tag == 'goodbye':
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
-                url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
-                label = Label(text="Click here to give us feedback", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
-                label.url = url
-                screen_manager.get_screen('content').chat_list.add_widget(label)
-            else:
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
-
-            screen_manager.get_screen('content').text_input.text = ""
+            sql = """INSERT INTO results (email, disease) VALUES (?, ?)"""
+            record = (user_details['email'], ans['prediction'])
+            c.execute(sql, record)
 
         mydb.commit()
 
