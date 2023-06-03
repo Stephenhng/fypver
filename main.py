@@ -9,6 +9,7 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.clock import Clock
+from kivy.utils import platform
 from kivy.uix.screenmanager import ScreenManager
 from kivy.network.urlrequest import UrlRequest
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty, ListProperty
@@ -26,8 +27,9 @@ import pickle
 import numpy as np
 import nltk
 import webbrowser
-import os.path
+import os
 import certifi as cfi
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "disease.db")
@@ -1053,4 +1055,30 @@ class parentApp(App):
 
 
 if __name__ == "__main__":
+    if platform == 'android':
+        from android.permissions import request_permissions, Permission
+        request_permissions([Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE,
+                             Permission.READ_EXTERNAL_STORAGE])
+        # localNLTK = "/nltk_data"
+        # if os.path.isdir('/nltk_data'):
+        #     if localNLTK not in nltk.data.path:
+        #         nltk.data.path.append(localNLTK)
+        # else:
+        #     from zipfile import ZipFile
+        #     with ZipFile('nltk_data.zip', 'r') as zipObj:
+        #         zipObj.extractall(localNLTK)
+        #     if localNLTK not in nltk.data.path:
+        #         nltk.data.path.append(localNLTK)
+        # Get the app's internal storage directory
+        localNLTK = os.path.join(os.path.expanduser('~'), 'nltk_data')
+
+        # Create the 'nltk_data' directory if it doesn't exist
+        if not os.path.exists(localNLTK):
+            os.makedirs(localNLTK)
+
+        # Download NLTK data to the 'nltk_data' directory
+        nltk.download('punkt', download_dir=localNLTK)
+
+        # Add 'nltk_data' directory to nltk.data.path
+        nltk.data.path.append(localNLTK)
     parentApp().run()

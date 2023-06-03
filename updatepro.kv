@@ -51,6 +51,7 @@ Screen:
                     multiline:False
                     write_tab:False
                     on_text_validate: BS.focus = True
+                    foreground_color: (25/255, 25/255, 112/255, 1)
 
                 Label:
                     text:"Age"
@@ -69,6 +70,7 @@ Screen:
                     hint_text: 'Enter Age'
                     size_hint: .8, .2
                     multiline:False
+                    foreground_color: (25/255, 25/255, 112/255, 1)
 
                 Label:
                     text:"Body Weight(kg)"
@@ -87,6 +89,7 @@ Screen:
                     hint_text: 'Enter Body Weight'
                     size_hint: .8, .2
                     multiline:False
+                    foreground_color: (25/255, 25/255, 112/255, 1)
 
                 Label:
                     text:"Body Height(cm)"
@@ -105,6 +108,7 @@ Screen:
                     hint_text: 'Enter Body Height'
                     size_hint: .8, .2
                     multiline:False
+                    foreground_color: (25/255, 25/255, 112/255, 1)
 
                 Label:
                     text:"Gender(Male/Female)"
@@ -123,6 +127,7 @@ Screen:
                     hint_text: 'Enter gender'
                     size_hint: .8, .2
                     multiline:False
+                    foreground_color: (25/255, 25/255, 112/255, 1)
 
 
                 Label:
@@ -170,11 +175,14 @@ Screen:
                     hint_text: 'Enter Phone Number'
                     size_hint: .8, .2
                     multiline:False
+                    foreground_color: (25/255, 25/255, 112/255, 1)
 
 
             Button:
                 size_hint: .8,.1
                 text: "Save/Update"
+                background_down: ''
+                background_color: (173/255, 255/255, 47/255, 1)
                 on_release:
                     app.update_profile()
 
