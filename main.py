@@ -3,6 +3,8 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.app import App
+from kivy.uix.progressbar import ProgressBar
+from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -587,7 +589,7 @@ class parentApp(App):
                         "yellow crust ooze"]
         symptom_str = ",".join(symptom_list)
 
-        feedback = ["feedback", "Feedback", "complain", "I want to complain", "this is good application", "give feedback", "feedback form"];
+        feedback = ["feedback", "Feedback", "complain", "I want to complain", "this is good application", "give feedback", "feedback form"]
 
         feedback_str = ",".join(feedback)
 
@@ -595,31 +597,30 @@ class parentApp(App):
 
 
         if sentence not in symptom_str:
-            if screen_manager.get_screen('content').text_input != "":
-                if len(sentence) < 6:
-                    size = .22, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(sentence) < 11:
-                    size = .32, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(sentence) < 16:
-                    size = .45, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(sentence) < 21:
-                    size = .58, None
-                    halign = "center"
-                    valign = "middle"
-                elif len(sentence) < 26:
-                    size = .71, None
-                    halign = "center"
-                    valign = "middle"
-                else:
-                    size = .77, None
-                    halign = "left"
-                    valign = "middle"
+            if len(sentence) < 6:
+                size = .22, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 11:
+                size = .32, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 16:
+                size = .45, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 21:
+                size = .58, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 26:
+                size = .71, None
+                halign = "center"
+                valign = "middle"
+            else:
+                size = .77, None
+                halign = "left"
+                valign = "middle"
 
             screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
 
@@ -630,10 +631,36 @@ class parentApp(App):
                 label.url = url
                 screen_manager.get_screen('content').chat_list.add_widget(label)
 
-            url = f'https://chatbotapilatest2.onrender.com/response?sentence={sentence}'
+            output_string = sentence.replace(" ", "%20")
+
+            url = f'https://chatbotapilatest2.onrender.com/response?sentence={output_string}'
             self.request = UrlRequest(url=url, on_success=self.sres, ca_file=cfi.where(), verify=True)
 
         elif sentence in symptom_str:
+            if len(sentence) < 6:
+                size = .22, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 11:
+                size = .32, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 16:
+                size = .45, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 21:
+                size = .58, None
+                halign = "center"
+                valign = "middle"
+            elif len(sentence) < 26:
+                size = .71, None
+                halign = "center"
+                valign = "middle"
+            else:
+                size = .77, None
+                halign = "left"
+                valign = "middle"
 
             screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
             list_m = sentence.split(',')
@@ -979,13 +1006,11 @@ class parentApp(App):
         with sqlite3.connect(db_path) as mydb:
             c = mydb.cursor()
 
-            self.data = self.request2.result
-            ans = self.data
+            self.data2 = self.request2.result
+            ans = self.data2
             screen_manager.get_screen('content').chat_list.add_widget(
-                Response(text="Prediction Result: Disease " + ans['prediction'] + " you got infected.",
+                Response(text="Prediction Result: Disease " + ans['prediction'] + "%",
                          size_hint=(.65, None)))
-            screen_manager.get_screen('content').chat_list.add_widget(
-                Response(text="Average score for this prediction model: " + "average 95%", size_hint=(.65, None)))
 
             sql = """INSERT INTO results (email, disease) VALUES (?, ?)"""
             record = (user_details['email'], ans['prediction'])
