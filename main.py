@@ -12,7 +12,6 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager
 from kivy.network.urlrequest import UrlRequest
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty, ListProperty
-from datetime import datetime
 import webbrowser
 import warnings
 import pandas as pd
@@ -22,13 +21,14 @@ import numpy as np
 import os
 import certifi as cfi
 
+Window.keyboard_anim_args = {'d': .2, 't': 'in_out_expo'}
+Window.softinput_mode = "below_target"
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "disease.db")
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
-
-now = datetime.now()
 
 
 class Command(Label):
@@ -593,34 +593,38 @@ class parentApp(App):
 
         sentence = screen_manager.get_screen('content').text_input.text
 
+        if len(sentence) < 6:
+            size = .22, None
+            halign = "center"
+            valign = "middle"
+        elif len(sentence) < 11:
+            size = .32, None
+            halign = "center"
+            valign = "middle"
+        elif len(sentence) < 16:
+            size = .45, None
+            halign = "center"
+            valign = "middle"
+        elif len(sentence) < 21:
+            size = .58, None
+            halign = "center"
+            valign = "middle"
+        elif len(sentence) < 26:
+            size = .71, None
+            halign = "center"
+            valign = "middle"
+        else:
+            size = .77, None
+            halign = "left"
+            valign = "middle"
+
+        url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
+        label = Label(text="Use Example Of Symptoms Here", font_size= 10, size_hint=(1, None), color=(0, 0, 1, 1), halign="center", valign="middle", underline=True)
+        label.url = url
+        screen_manager.get_screen('content').chat_list.add_widget(label)
+        screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
 
         if sentence not in symptom_str:
-            if len(sentence) < 6:
-                size = .22, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 11:
-                size = .32, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 16:
-                size = .45, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 21:
-                size = .58, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 26:
-                size = .71, None
-                halign = "center"
-                valign = "middle"
-            else:
-                size = .77, None
-                halign = "left"
-                valign = "middle"
-
-            screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
 
             if sentence in feedback_str:
                 url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
@@ -634,33 +638,8 @@ class parentApp(App):
             url = f'https://chatbotapilatest2.onrender.com/response?sentence={output_string}'
             self.request = UrlRequest(url=url, on_success=self.sres, ca_file=cfi.where(), verify=True)
 
-        elif sentence in symptom_str:
-            if len(sentence) < 6:
-                size = .22, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 11:
-                size = .32, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 16:
-                size = .45, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 21:
-                size = .58, None
-                halign = "center"
-                valign = "middle"
-            elif len(sentence) < 26:
-                size = .71, None
-                halign = "center"
-                valign = "middle"
-            else:
-                size = .77, None
-                halign = "left"
-                valign = "middle"
+        else:
 
-            screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
             list_m = sentence.split(',')
             psymptoms = [sentence.replace(' ', '_') for sentence in list_m]
 
@@ -673,15 +652,24 @@ class parentApp(App):
                         psymptoms[j] = b[k]
 
 
-            if len(psymptoms) < 2:
-                layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                popupLabel = Label(text="Please enter at least two symptoms for prediction.")
-                closeButton = Button(text="Close to continue")
-                layout.add_widget(popupLabel)
-                layout.add_widget(closeButton)
-                popup = Popup(title='Symptom Quantity', content=layout)
-                popup.open()
-                closeButton.bind(on_press=popup.dismiss)
+            if len(psymptoms) == 1:
+                symptom1 = psymptoms[0]
+                symptom2 = 0
+                symptom3 = 0
+                symptom4 = 0
+                symptom5 = 0
+                symptom6 = 0
+                symptom7 = 0
+                symptom8 = 0
+                symptom9 = 0
+                symptom10 = 0
+                symptom11 = 0
+                symptom12 = 0
+                symptom13 = 0
+                symptom14 = 0
+                symptom15 = 0
+                symptom16 = 0
+                symptom17 = 0
             elif len(psymptoms) == 2:
                 symptom1 = psymptoms[0]
                 symptom2 = psymptoms[1]
@@ -981,10 +969,8 @@ class parentApp(App):
                 closeButton.bind(on_press=popup.dismiss)
 
             url2 = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
-            self.request2 = UrlRequest(url=url2, on_success=self.res, on_failure=self.fail, ca_file=cfi.where(),
+            self.request2 = UrlRequest(url=url2, on_success=self.res, ca_file=cfi.where(),
                                        verify=True)
-        else:
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text="Not sure what you want",size_hint=(.65, None)))
 
         screen_manager.get_screen('content').text_input.text = ""
 
@@ -1018,20 +1004,6 @@ class parentApp(App):
 
         mydb.close()
 
-    def fail(self, *args):
-        self.data_error = self.request2.result
-        screen_manager.get_screen('content').chat_list.add_widget(
-            Response(text="Enter more than one symptoms.", size_hint=(.80, None)))
-        screen_manager.get_screen('content').chat_list.add_widget(
-            Response(text="Use relevant symptom without space between comma only for prediction.",
-                     size_hint=(.80, None)))
-        screen_manager.get_screen('content').chat_list.add_widget(
-            Response(text="For Example: muscle weakness,stiff neck,swelling join,movement stiffness",
-                     size_hint=(.80, None)))
-        url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
-        label = Label(text="See More Symptoms", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
-        label.url = url
-        screen_manager.get_screen('content').chat_list.add_widget(label)
 
 
 if __name__ == "__main__":

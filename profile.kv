@@ -58,7 +58,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
                 Label:
                     text:"Age"
@@ -85,7 +85,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
                 Label:
                     text:"Body Weight(kg)"
@@ -112,7 +112,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
                 Label:
                     text:"Body Height(cm)"
@@ -139,7 +139,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
                 Label:
                     text:"Gender(Male/Female)"
@@ -166,7 +166,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
                 Label:
                     text:"Email"
@@ -193,7 +193,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
                 Label:
                     text:"Phone Number"
@@ -220,7 +220,7 @@ Screen:
                         Rectangle:
                             size: self.size
                             pos: self.pos
-                    color: 0,0,0,1
+                    color: (4/255, 59/255, 92/255, 1)
 
             GridLayout:
                 cols:1
@@ -228,6 +228,7 @@ Screen:
 
                 Button:
                     text: "Edit Profile"
+                    background_color: (200/255,247/255,197/255,1)
                     on_release:
                         app.update_profile_detail()
 
@@ -236,56 +237,31 @@ Screen:
                 cols:4
                 size_hint: .8, .6/5
                 Button:
+                    text: "HOME"
+                    background_color: (92/255,151/255,191/255,1)
                     on_release:
                         app.root.current = "content"
                         root.manager.transition.direction = "right"
-                    Image:
-                        source:"images/home.png"
-                        size_hint: .2, .2
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y - 0.4* self.parent.height
-                        x: self.parent.x
-                        width: self.parent.width
-
 
                 Button:
+                    text: "HISTORY"
+                    background_color: (92/255,151/255,191/255,1)
                     on_release:
                         app.root.current = "history"
                         root.manager.transition.direction = "right"
                         app.history()
-                    Image:
-                        source:"images/document.png"
-                        size_hint: .2, .2
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y - 0.4* self.parent.height
-                        x: self.parent.x
-                        width: self.parent.width
 
                 Button:
+                    text: "PROFILE"
+                    background_color: (92/255,151/255,191/255,1)
                     on_release:
                         app.root.current = "profile"
                         root.manager.transition.direction = "left"
                         app.profile()
-                    Image:
-                        source:"images/person.png"
-                        size_hint: .2, .2
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y - 0.4* self.parent.height
-                        x: self.parent.x
-                        width: self.parent.width
 
                 Button:
+                    text: "SETTING"
+                    background_color: (92/255,151/255,191/255,1)
                     on_release:
                         app.root.current = "setting"
                         root.manager.transition.direction = "left"
-                    Image:
-                        source:"images/settings.png"
-                        size_hint: .2, .2
-                        keep_ratio: True
-                        allow_stretch: False
-                        y: self.parent.y - 0.4* self.parent.height
-                        x: self.parent.x
-                        width: self.parent.width

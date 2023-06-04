@@ -125,6 +125,8 @@ def get_cat(sentence: str):
     elif tag == 'feedback':
         resp = "Thank you for your feedback!\nProvide feedback by clicking the link above.\n"
         return {'response': resp}
+    elif tag == 'symptoms':
+        return {'response': "Please provide valid symptoms based on given example."}
     else:
         return {'response': res}
 
