@@ -3,8 +3,6 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.app import App
-from kivy.uix.progressbar import ProgressBar
-from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -166,7 +164,7 @@ class parentApp(App):
         with sqlite3.connect(db_path) as mydb:
             c = mydb.cursor()
 
-            sql = (f"SELECT * FROM users WHERE email = '{email}' and password = '{passwd}'")
+            sql = f"SELECT * FROM users WHERE email = '{email}' and password = '{passwd}'"
             c.execute(sql)
             result = c.fetchone()
 
