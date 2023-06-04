@@ -34,5 +34,9 @@
     "loss of smell", "bladder discomfort", "foul smell ofurine", "continuous feel of urine", "passage of gases", "internal itching", "toxic look (typhos)", "depression", "irritability", "muscle pain", "altered sensorium", "red spots over body", "belly pain", "abnormal menstruation", "dischromic patches", "watering from eyes", "increased appetite", "polyuria", "family history", "mucoid sputum", "rusty sputum", "lack of concentration", "visual disturbances", "receiving blood transfusion", "receiving unsterile injections",
     "coma", "stomach bleeding", "distention of abdomen", "history of alcohol consumption", "blood in sputum", "prominent veins on calf", "palpitations", "painful walking", "pus filled pimples", "blackheads", "scurring", "skin peeling", "silver like dusting", "small dents in nails", "inflammatory nails", "blister", "red sore around nose", "yellow crust ooze"],
   "responses": [""]
+  },
+  {"tag": "feedback",
+  "patterns": ["feedback", "Feedback", "complain", "I want to complain", "this is good application", "give feedback", "feedback form"],
+  "responses": [""]
   }
 ]}

@@ -9,42 +9,22 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.clock import Clock
-from kivy.utils import platform
 from kivy.uix.screenmanager import ScreenManager
 from kivy.network.urlrequest import UrlRequest
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty, ListProperty
 from datetime import datetime
-from model import TensorFlowModel
-from nltk.stem import WordNetLemmatizer
-import csv
+import webbrowser
 import warnings
 import pandas as pd
 import sqlite3
 import re
-import random
-import json
-import pickle
 import numpy as np
-import nltk
-import webbrowser
 import os
 import certifi as cfi
-
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "disease.db")
 warnings.filterwarnings("ignore", category=DeprecationWarning)
-
-lemmatizer = WordNetLemmatizer()
-intents = json.loads(open('intents.json').read())
-description_intents = json.loads(open('description_intents.json').read())
-precaution_intents = json.loads(open('precaution_intents.json').read())
-
-words = pickle.load(open('words.pkl', 'rb'))
-classes = pickle.load(open('classes.pkl', 'rb'))
-
-model = TensorFlowModel()
-model.load(os.path.join(os.getcwd(), 'model.tflite'))
 
 df1 = pd.read_csv('MasterData/Symptom_Severity.csv')
 
@@ -129,8 +109,6 @@ class parentApp(App):
         screen_manager.add_widget(Builder.load_file("setting.kv"))
         screen_manager.add_widget(Builder.load_file("forget.kv"))
         screen_manager.add_widget(Builder.load_file("updatepro.kv"))
-        self.disease_description()
-        self.disease_precaution()
 
         with sqlite3.connect(db_path) as mydb:
 
@@ -175,27 +153,6 @@ class parentApp(App):
 
         return screen_manager
 
-    def disease_description(self):
-        with open('MasterData/Symptom_Description.csv', 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            next(csv_reader)
-            _description = {"description_intents": []}
-            for row in csv_reader:
-                _description["description_intents"].append({"tag": "description_" + row[0].replace(' ', '_'), "patterns": [row[0].lower(), row[0], "what is " + row[0], "tell me about " + row[0], "Anything on " + row[0], "how about " + row[0]], "responses": [row[1]]})
-
-        with open('description_intents.json', 'w') as json_file:
-            json.dump(_description, json_file, indent=2)
-
-    def disease_precaution(self):
-        with open('MasterData/Symptom_Precaution.csv', 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            next(csv_reader)
-            _precaution = {"precaution_intents": []}
-            for row in csv_reader:
-                _precaution["precaution_intents"].append({"tag": "precaution_" + row[0].replace(' ', '_'), "patterns": ["medicine for " + row[0], "Recover of " + row[0], "treatment for " + row[0], "I am getting " + row[0], "what is the precaution for " + row[0], "how to avoid " + row[0], "how to prevent " + row[0]], "responses": [row[1], row[2], row[3], row[4]]})
-
-        with open('precaution_intents.json', 'w') as json_file:
-            json.dump(_precaution, json_file, indent=2)
 
     def log_in(self):
         email = screen_manager.get_screen('main').email.text
@@ -588,92 +545,99 @@ class parentApp(App):
             screen_manager.get_screen('forget').fg_confirm_passwd.password = True
             screen_manager.get_screen('forget').btn_fg_cp.text = "Show"
 
-    def clean_up_sentence(self, sentence):
-        sentence_words = nltk.word_tokenize(sentence)
-        sentence_words = [lemmatizer.lemmatize(word) for word in sentence_words]
-        return sentence_words
-
-    def bag_of_words(self, sentence):
-        sentence_words = self.clean_up_sentence(sentence)
-        bag = [0] * len(words)
-        for w in sentence_words:
-            for i, word in enumerate(words):
-                if word == w:
-                    bag[i] = 1
-        return np.array(bag)
-
-    def predict_class(self, sentence):
-        bow = self.bag_of_words(sentence)
-        res = model.pred(np.array([bow]))[0]
-        ERROR_THRESHOLD = 0.20
-        result = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
-
-        result.sort(key=lambda x: x[1], reverse=True)
-        return_list = []
-        for r in result:
-            return_list.append({'intent': classes[r[0]], 'probability': str(r[1])})
-        return return_list
-
-    def response(self, intents_list, intents_json, intents_json2, intents_json3):
-        tag = intents_list[0]['intent']
-
-        list_intents = intents_json['intents']
-        list_intents2 = intents_json2['description_intents']
-        list_intents3 = intents_json3['precaution_intents']
-
-        for i in list_intents:
-            for j in list_intents2:
-                for k in list_intents3:
-                    if i['tag'] == tag:
-                        result = random.choice(i['responses'])
-                        break
-                    elif j['tag'] == tag:
-                        result = random.choice(j['responses'])
-                        break
-                    elif k['tag'] == tag:
-                        result = random.choice(k['responses'])
-        return result
-    print("Bot is running!")
 
     def send(self):
         global size, halign, valign, symptom1, symptom2, symptom3, symptom4, symptom5, symptom6, symptom7, symptom8, symptom9, symptom10, symptom11, symptom12, symptom13, symptom14, symptom15, symptom16, symptom17
+        symptom_list = ["itching", "skin rash", "nodal skin eruptions", "continuous sneezing", "shivering",
+                        "chills",
+                        "joint pain", "stomach pain", "acidity", "ulcers on tongue", "muscle wasting",
+                        "vomiting",
+                        "burning micturition", "spotting urination", "fatigue", "weight gain", "anxiety",
+                        "cold hands and feets", "mood swings", "weight loss", "restlessness", "lethargy",
+                        "patches in throat", "irregular sugar level", "cough", "high fever", "sunken eyes",
+                        "breathlessness", "sweating", "dehydration", "indigestion",
+                        "headache", "yellowish skin", "dark urine", "nausea", "loss of appetite",
+                        "pain behind the eyes", "back pain", "constipation", "abdominal pain", "diarrhoea",
+                        "mild fever", "yellow urine", "yellowing of eyes", "acute liver failure",
+                        "fluid overload",
+                        "swelling of stomach", "swelled lymph nodes", "malaise", "blurred and distorted vision",
+                        "phlegm", "throat irritation", "redness of eyes", "sinus pressure", "runny nose",
+                        "congestion",
+                        "chest pain", "weakness in limbs", "fast heart rate", "pain during bowel movements",
+                        "pain in anal region", "bloody stool", "irritation in anus", "neck pain", "dizziness",
+                        "cramps",
+                        "bruising", "obesity", "swollen legs", "swollen blood vessels", "puffy face and eyes",
+                        "enlarged thyroid", "brittle nails", "swollen extremeties", "excessive hunger",
+                        "extra marital contacts", "drying and tingling lips", "slurred speech", "knee pain",
+                        "hip joint pain", "muscle weakness", "stiff neck", "swelling joints",
+                        "movement stiffness",
+                        "spinning movements", "loss of balance", "unsteadiness", "weakness of one body side",
+                        "loss of smell", "bladder discomfort", "foul smell ofurine", "continuous feel of urine",
+                        "passage of gases", "internal itching", "toxic look (typhos)", "depression",
+                        "irritability",
+                        "muscle pain", "altered sensorium", "red spots over body", "belly pain",
+                        "abnormal menstruation", "dischromic patches", "watering from eyes",
+                        "increased appetite",
+                        "polyuria", "family history", "mucoid sputum", "rusty sputum", "lack of concentration",
+                        "visual disturbances", "receiving blood transfusion", "receiving unsterile injections",
+                        "coma", "stomach bleeding", "distention of abdomen", "history of alcohol consumption",
+                        "blood in sputum", "prominent veins on calf", "palpitations", "painful walking",
+                        "pus filled pimples", "blackheads", "scurring", "skin peeling", "silver like dusting",
+                        "small dents in nails", "inflammatory nails", "blister", "red sore around nose",
+                        "yellow crust ooze"]
+        symptom_str = ",".join(symptom_list)
 
-        message = screen_manager.get_screen('content').text_input.text
-        ints = self.predict_class(message)
-        res = self.response(ints, intents, description_intents, precaution_intents)
-        tag = ints[0]['intent']
+        feedback = ["feedback", "Feedback", "complain", "I want to complain", "this is good application", "give feedback", "feedback form"];
 
-        if screen_manager.get_screen('content').text_input != "":
-            if len(message) < 6:
-                size = .22, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 11:
-                size = .32, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 16:
-                size = .45, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 21:
-                size = .58, None
-                halign = "center"
-                valign = "middle"
-            elif len(message) < 26:
-                size = .71, None
-                halign = "center"
-                valign = "middle"
-            else:
-                size = .77, None
-                halign = "left"
-                valign = "middle"
+        feedback_str = ",".join(feedback)
 
-        screen_manager.get_screen('content').chat_list.add_widget(Command(text=message, size_hint=size, halign=halign))
+        sentence = screen_manager.get_screen('content').text_input.text
 
-        if tag == 'symptoms':
-            list_m = message.split(',')
-            psymptoms = [message.replace(' ', '_') for message in list_m]
+
+        if sentence not in symptom_str:
+            if screen_manager.get_screen('content').text_input != "":
+                if len(sentence) < 6:
+                    size = .22, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(sentence) < 11:
+                    size = .32, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(sentence) < 16:
+                    size = .45, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(sentence) < 21:
+                    size = .58, None
+                    halign = "center"
+                    valign = "middle"
+                elif len(sentence) < 26:
+                    size = .71, None
+                    halign = "center"
+                    valign = "middle"
+                else:
+                    size = .77, None
+                    halign = "left"
+                    valign = "middle"
+
+            screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
+
+            if sentence in feedback_str:
+                url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
+                label = Label(text="Click here to give us feedback", size_hint=(.45, None), color=(0, 0, 1, 1),
+                              underline=True)
+                label.url = url
+                screen_manager.get_screen('content').chat_list.add_widget(label)
+
+            url = f'https://chatbotapilatest2.onrender.com/response?sentence={sentence}'
+            self.request = UrlRequest(url=url, on_success=self.sres, ca_file=cfi.where(), verify=True)
+
+        elif sentence in symptom_str:
+
+            screen_manager.get_screen('content').chat_list.add_widget(Command(text=sentence, size_hint=size, halign=halign))
+            list_m = sentence.split(',')
+            psymptoms = [sentence.replace(' ', '_') for sentence in list_m]
 
             a = np.array(df1["Symptom"])
             b = np.array(df1["weight"])
@@ -991,27 +955,21 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
 
-            try:
-                url = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
-                self.request = UrlRequest(url=url, on_success=self.res, on_failure=self.fail, ca_file=cfi.where(), verify=True)
-            except Exception:
-                screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please enter more than one symptoms.", size_hint=(.80, None)))
-
-
-        elif tag == 'datetime':
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text=now.strftime("%A \n%d %B %Y \n%H:%M:%S"), size_hint=(.65, None)))
-        elif len(message) == 0 or tag != ints[0]['intent']:
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text="What are you going to ask?", size_hint=(.65, None)))
-        elif tag == 'goodbye':
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
-            url = "https://docs.google.com/forms/d/e/1FAIpQLScpxmn2ZjA4YlngPctl9sSXLyOReiJmf28nNj-RgGjgSusEgg/viewform?usp=sf_link"
-            label = Label(text="Click here to give us feedback", size_hint=(.45, None), color=(0, 0, 1, 1), underline=True)
-            label.url = url
-            screen_manager.get_screen('content').chat_list.add_widget(label)
+            url2 = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
+            self.request2 = UrlRequest(url=url2, on_success=self.res, on_failure=self.fail, ca_file=cfi.where(),
+                                       verify=True)
         else:
-            screen_manager.get_screen('content').chat_list.add_widget(Response(text=res, size_hint=(.65, None)))
+            screen_manager.get_screen('content').chat_list.add_widget(Response(text="Not sure what you want",size_hint=(.65, None)))
 
         screen_manager.get_screen('content').text_input.text = ""
+
+
+    def sres(self, *args):
+        self.data = self.request.result
+        ans = self.data
+        screen_manager.get_screen('content').chat_list.add_widget(
+            Response(text=ans['response'],
+                     size_hint=(.65, None)))
 
 
     def res(self, *args):
@@ -1021,7 +979,7 @@ class parentApp(App):
         with sqlite3.connect(db_path) as mydb:
             c = mydb.cursor()
 
-            self.data = self.request.result
+            self.data = self.request2.result
             ans = self.data
             screen_manager.get_screen('content').chat_list.add_widget(
                 Response(text="Prediction Result: Disease " + ans['prediction'] + " you got infected.",
@@ -1038,8 +996,7 @@ class parentApp(App):
         mydb.close()
 
     def fail(self, *args):
-        self.data_error = self.request.result
-        print(self.data_error)
+        self.data_error = self.request2.result
         screen_manager.get_screen('content').chat_list.add_widget(
             Response(text="Enter more than one symptoms.", size_hint=(.80, None)))
         screen_manager.get_screen('content').chat_list.add_widget(
@@ -1055,30 +1012,4 @@ class parentApp(App):
 
 
 if __name__ == "__main__":
-    if platform == 'android':
-        from android.permissions import request_permissions, Permission
-        request_permissions([Permission.CAMERA, Permission.WRITE_EXTERNAL_STORAGE,
-                             Permission.READ_EXTERNAL_STORAGE])
-        # localNLTK = "/nltk_data"
-        # if os.path.isdir('/nltk_data'):
-        #     if localNLTK not in nltk.data.path:
-        #         nltk.data.path.append(localNLTK)
-        # else:
-        #     from zipfile import ZipFile
-        #     with ZipFile('nltk_data.zip', 'r') as zipObj:
-        #         zipObj.extractall(localNLTK)
-        #     if localNLTK not in nltk.data.path:
-        #         nltk.data.path.append(localNLTK)
-        # Get the app's internal storage directory
-        localNLTK = os.path.join(os.path.expanduser('~'), 'nltk_data')
-
-        # Create the 'nltk_data' directory if it doesn't exist
-        if not os.path.exists(localNLTK):
-            os.makedirs(localNLTK)
-
-        # Download NLTK data to the 'nltk_data' directory
-        nltk.download('punkt', download_dir=localNLTK)
-
-        # Add 'nltk_data' directory to nltk.data.path
-        nltk.data.path.append(localNLTK)
     parentApp().run()
