@@ -38,5 +38,25 @@
   {"tag": "feedback",
   "patterns": ["feedback", "Feedback", "complain", "I want to complain", "this is good application", "give feedback", "feedback form"],
   "responses": [""]
+  },
+  {"tag": "exclaim",
+  "patterns": ["Awesome", "awesome", "great", "Great", "I know", "ok", "wow","yeah"],
+  "responses": ["Yeah!"]
+  },
+  {"tag": "activity",
+  "patterns": ["what are you doing", "what are you upto", "doing what thing", "what task you ongoing", "what are you completing", "completed", "done"],
+  "responses": ["I'm pleasure to help you on anything"]
+  },
+  {"tag": "haha",
+  "patterns": ["haha", "lol", "rofl", "lmao", "thats funny", "hehehe", "laugh die"],
+  "responses": ["Glad I could make you laugh !"]
+  },
+  {"tag": "master",
+  "patterns": ["who is your master", "who make you", "your master?", "your creator?", "who created you", "who build and train your","is your master boy or girl"],
+  "responses": ["It's secret", "My master is a handsome teenage", "Do not try to stalk my master or creator"]
+  },
+  {"tag": "rude",
+  "patterns": ["shit", "suck", "fuck", "speechless", "useless", "fucker","bitch"],
+  "responses": ["Im sorry if not helping you","Please do not so rude"]
   }
 ]}
