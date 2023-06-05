@@ -114,9 +114,6 @@ class parentApp(App):
 
             c = mydb.cursor()
 
-            # sql = "DELETE FROM users WHERE email = 'fucai99@gmail.com'"
-            # c.execute(sql)
-
             # sql2 = "SELECT * FROM users"
             # c.execute(sql2)
             # result = c.fetchall()
