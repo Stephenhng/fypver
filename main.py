@@ -285,7 +285,7 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
             else:
-                sql2 = "UPDATE users SET password = %s , confirm_password = %s WHERE email = %s"
+                sql2 = "UPDATE users SET password = ? , confirm_password = ? WHERE email = ?"
                 var = (fg_passwd, fg_confirm_passwd, fg_email)
                 c.execute(sql2, var)
 
@@ -327,7 +327,7 @@ class parentApp(App):
         with sqlite3.connect(db_path) as mydb:
             c = mydb.cursor()
 
-            sql2 = "SELECT name FROM users"
+            sql2 = "SELECT email FROM users"
             c.execute(sql2)
             result = c.fetchall()
 
@@ -492,12 +492,12 @@ class parentApp(App):
                 popup.open()
                 closeButton.bind(on_press=popup.dismiss)
             else:
-                sql2 = (f"UPDATE users SET name = %s, age = %s, weight = %s, height = %s, gender = %s, phone = %s WHERE email = '{user_details['email']}'")
+                sql2 = f"UPDATE users SET name = ?, age = ?, weight = ?, height = ?, gender = ?, phone = ? WHERE email = '{user_details['email']}'"
                 var = (up_username, up_age, up_weight, up_height, up_gender, up_phone)
                 c.execute(sql2, var)
 
                 layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                popupLabel = Label(text="Save/Update successful")
+                popupLabel = Label(text="Save/Update successful.\nRelogin to see the change.")
                 closeButton = Button(text="Close to continue")
                 layout.add_widget(popupLabel)
                 layout.add_widget(closeButton)
