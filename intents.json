@@ -56,7 +56,11 @@
   "responses": ["It's secret", "My master is a handsome teenage", "Do not try to stalk my master or creator"]
   },
   {"tag": "rude",
-  "patterns": ["shit", "suck", "fuck", "speechless", "useless", "fucker","bitch"],
+  "patterns": ["shit", "suck", "fuck", "speechless", "useless", "fucker","bitch","fuck you","suck my dick","wanna give a fuck"],
   "responses": ["Im sorry if not helping you","Please do not so rude"]
+  },
+  {"tag": "prediction",
+  "patterns": ["how to start disease prediction", "start prediction", "disease prediction", "why the prediction no response", "give me a disease", "the step of disease prediction","how prediction process"],
+  "responses": ["Just input your symptoms. Please reinput if no response from me because it might invalid for me for the prediction."]
   }
 ]}
