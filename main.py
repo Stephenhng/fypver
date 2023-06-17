@@ -49,7 +49,7 @@ class History(Label):
     text = StringProperty
     size_hint_x = NumericProperty
     halign = StringProperty
-    font_size = 17
+    font_size = 20
 
 
 class Label(Label):
@@ -130,19 +130,11 @@ class parentApp(App):
 
             # c.execute("""DROP TABLE results""")
 
-            #c.execute("SHOW DATABASES")
-            #for db in c:
-            #    print(db)
-
             #c.execute("SELECT * FROM users")
             #print(c.description)
 
             c.execute("""CREATE TABLE IF NOT EXISTS users (name VARCHAR(255), age INT(10), weight INT(10), height INT(10), gender VARCHAR(255), email VARCHAR(255), phone VARCHAR(255), password VARCHAR(255), confirm_password VARCHAR(255))""")
             c.execute("""CREATE TABLE IF NOT EXISTS results (email VARCHAR(255), disease VARCHAR(255))""")
-
-            # c.execute("SHOW TABLES")
-            # for x in c:
-            #    print(x)
 
         mydb.commit()
 
@@ -195,6 +187,8 @@ class parentApp(App):
 
         screen_manager.get_screen('main').email.text = ""
         screen_manager.get_screen('main').passwd.text = ""
+        label = Label(text="Please wait for the response when first time send message and disease prediction.\nReenter your symptoms when the response time took more than 5 minutes.", color=(1, 0, 0, 1), font_size=20, size_hint=(1, None), halign='center', valign='middle')
+        screen_manager.get_screen('content').chat_list.add_widget(label)
 
     def log_out(self):
         layout = GridLayout(cols=1, size_hint=(.6, .3), pos_hint={"x": .2, "top": .9}, padding=10)
@@ -577,7 +571,7 @@ class parentApp(App):
             halign = "left"
             valign = "middle"
 
-        url = "https://drive.google.com/file/d/1f7WC3-_GNjdxaB8WDuPQVrq5xdvwUpV2/view?usp=drive_link"
+        url = "https://drive.google.com/file/d/1RAXxO6LYj-6S-cknGqFII1XtVFarBKMw/view?usp=sharing"
         label = Label(text="Use Example Of Symptoms Here", font_size= 20, size_hint=(1, None), color=(0, 0, 1, 1), halign="center", valign="middle", underline=True)
         label.url = url
         screen_manager.get_screen('content').chat_list.add_widget(label)
@@ -600,384 +594,338 @@ class parentApp(App):
         url = f'https://chatbotapilatest2.onrender.com/response?sentence={output_string}'
         self.request = UrlRequest(url=url, on_success=self.sres, ca_file=cfi.where(), verify=True)
 
+        list_m = sentence.split(',')
+        psymptoms = [sentence.replace(' ', '_') for sentence in list_m]
+        print(psymptoms)
 
-        symptom_list = ["itching", "skin rash", "nodal skin eruptions", "continuous sneezing", "shivering",
-                        "chills",
-                        "joint pain", "stomach pain", "acidity", "ulcers on tongue", "muscle wasting",
-                        "vomiting",
-                        "burning micturition", "spotting urination", "fatigue", "weight gain", "anxiety",
-                        "cold hands and feets", "mood swings", "weight loss", "restlessness", "lethargy",
-                        "patches in throat", "irregular sugar level", "cough", "high fever", "sunken eyes",
-                        "breathlessness", "sweating", "dehydration", "indigestion",
-                        "headache", "yellowish skin", "dark urine", "nausea", "loss of appetite",
-                        "pain behind the eyes", "back pain", "constipation", "abdominal pain", "diarrhoea",
-                        "mild fever", "yellow urine", "yellowing of eyes", "acute liver failure",
-                        "fluid overload",
-                        "swelling of stomach", "swelled lymph nodes", "malaise", "blurred and distorted vision",
-                        "phlegm", "throat irritation", "redness of eyes", "sinus pressure", "runny nose",
-                        "congestion",
-                        "chest pain", "weakness in limbs", "fast heart rate", "pain during bowel movements",
-                        "pain in anal region", "bloody stool", "irritation in anus", "neck pain", "dizziness",
-                        "cramps",
-                        "bruising", "obesity", "swollen legs", "swollen blood vessels", "puffy face and eyes",
-                        "enlarged thyroid", "brittle nails", "swollen extremeties", "excessive hunger",
-                        "extra marital contacts", "drying and tingling lips", "slurred speech", "knee pain",
-                        "hip joint pain", "muscle weakness", "stiff neck", "swelling joints",
-                        "movement stiffness",
-                        "spinning movements", "loss of balance", "unsteadiness", "weakness of one body side",
-                        "loss of smell", "bladder discomfort", "foul smell ofurine", "continuous feel of urine",
-                        "passage of gases", "internal itching", "toxic look (typhos)", "depression",
-                        "irritability",
-                        "muscle pain", "altered sensorium", "red spots over body", "belly pain",
-                        "abnormal menstruation", "dischromic patches", "watering from eyes",
-                        "increased appetite",
-                        "polyuria", "family history", "mucoid sputum", "rusty sputum", "lack of concentration",
-                        "visual disturbances", "receiving blood transfusion", "receiving unsterile injections",
-                        "coma", "stomach bleeding", "distention of abdomen", "history of alcohol consumption",
-                        "blood in sputum", "prominent veins on calf", "palpitations", "painful walking",
-                        "pus filled pimples", "blackheads", "scurring", "skin peeling", "silver like dusting",
-                        "small dents in nails", "inflammatory nails", "blister", "red sore around nose",
-                        "yellow crust ooze"]
+        a = np.array(df1["Symptom"])
+        b = np.array(df1["weight"])
 
-        sentence_list = sentence.split(",")
+        for j in range(len(psymptoms)):
+            for k in range(len(a)):
+                if psymptoms[j] == a[k]:
+                    psymptoms[j] = b[k]
 
-        for i in range(len(symptom_list) - len(sentence_list) + 1):
-            if symptom_list[i:i + len(sentence_list)] == sentence_list:
-
-                list_m = sentence.split(',')
-                psymptoms = [sentence.replace(' ', '_') for sentence in list_m]
-                print(psymptoms)
-
-                a = np.array(df1["Symptom"])
-                b = np.array(df1["weight"])
-
-                for j in range(len(psymptoms)):
-                    for k in range(len(a)):
-                        if psymptoms[j] == a[k]:
-                            psymptoms[j] = b[k]
-
-                if len(psymptoms) == 1:
-                    symptom1 = psymptoms[0]
-                    symptom2 = 0
-                    symptom3 = 0
-                    symptom4 = 0
-                    symptom5 = 0
-                    symptom6 = 0
-                    symptom7 = 0
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 2:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = 0
-                    symptom4 = 0
-                    symptom5 = 0
-                    symptom6 = 0
-                    symptom7 = 0
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 3:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = 0
-                    symptom5 = 0
-                    symptom6 = 0
-                    symptom7 = 0
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 4:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = 0
-                    symptom6 = 0
-                    symptom7 = 0
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 5:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = 0
-                    symptom7 = 0
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 6:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = 0
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 7:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = 0
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 8:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = 0
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 9:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = 0
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 10:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = 0
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 11:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = 0
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 12:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = psymptoms[11]
-                    symptom13 = 0
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 13:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = psymptoms[11]
-                    symptom13 = psymptoms[12]
-                    symptom14 = 0
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 14:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = psymptoms[11]
-                    symptom13 = psymptoms[12]
-                    symptom14 = psymptoms[13]
-                    symptom15 = 0
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 15:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = psymptoms[11]
-                    symptom13 = psymptoms[12]
-                    symptom14 = psymptoms[13]
-                    symptom15 = psymptoms[14]
-                    symptom16 = 0
-                    symptom17 = 0
-                elif len(psymptoms) == 16:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = psymptoms[11]
-                    symptom13 = psymptoms[12]
-                    symptom14 = psymptoms[13]
-                    symptom15 = psymptoms[14]
-                    symptom16 = psymptoms[15]
-                    symptom17 = 0
-                elif len(psymptoms) == 17:
-                    symptom1 = psymptoms[0]
-                    symptom2 = psymptoms[1]
-                    symptom3 = psymptoms[2]
-                    symptom4 = psymptoms[3]
-                    symptom5 = psymptoms[4]
-                    symptom6 = psymptoms[5]
-                    symptom7 = psymptoms[6]
-                    symptom8 = psymptoms[7]
-                    symptom9 = psymptoms[8]
-                    symptom10 = psymptoms[9]
-                    symptom11 = psymptoms[10]
-                    symptom12 = psymptoms[11]
-                    symptom13 = psymptoms[12]
-                    symptom14 = psymptoms[13]
-                    symptom15 = psymptoms[14]
-                    symptom16 = psymptoms[15]
-                    symptom17 = psymptoms[16]
-                elif len(psymptoms) > 17:
-                    layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
-                    popupLabel = Label(text="Exceeded the quantity of symptoms.")
-                    closeButton = Button(text="Close to continue")
-                    layout.add_widget(popupLabel)
-                    layout.add_widget(closeButton)
-                    popup = Popup(title='Symptom Quantity', content=layout)
-                    popup.open()
-                    closeButton.bind(on_press=popup.dismiss)
+        if len(psymptoms) == 1:
+            symptom1 = psymptoms[0]
+            symptom2 = 0
+            symptom3 = 0
+            symptom4 = 0
+            symptom5 = 0
+            symptom6 = 0
+            symptom7 = 0
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 2:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = 0
+            symptom4 = 0
+            symptom5 = 0
+            symptom6 = 0
+            symptom7 = 0
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 3:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = 0
+            symptom5 = 0
+            symptom6 = 0
+            symptom7 = 0
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 4:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = 0
+            symptom6 = 0
+            symptom7 = 0
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 5:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = 0
+            symptom7 = 0
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 6:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = 0
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 7:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = 0
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 8:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = 0
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 9:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = 0
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 10:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = 0
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 11:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = 0
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 12:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = psymptoms[11]
+            symptom13 = 0
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 13:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = psymptoms[11]
+            symptom13 = psymptoms[12]
+            symptom14 = 0
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 14:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = psymptoms[11]
+            symptom13 = psymptoms[12]
+            symptom14 = psymptoms[13]
+            symptom15 = 0
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 15:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = psymptoms[11]
+            symptom13 = psymptoms[12]
+            symptom14 = psymptoms[13]
+            symptom15 = psymptoms[14]
+            symptom16 = 0
+            symptom17 = 0
+        elif len(psymptoms) == 16:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = psymptoms[11]
+            symptom13 = psymptoms[12]
+            symptom14 = psymptoms[13]
+            symptom15 = psymptoms[14]
+            symptom16 = psymptoms[15]
+            symptom17 = 0
+        elif len(psymptoms) == 17:
+            symptom1 = psymptoms[0]
+            symptom2 = psymptoms[1]
+            symptom3 = psymptoms[2]
+            symptom4 = psymptoms[3]
+            symptom5 = psymptoms[4]
+            symptom6 = psymptoms[5]
+            symptom7 = psymptoms[6]
+            symptom8 = psymptoms[7]
+            symptom9 = psymptoms[8]
+            symptom10 = psymptoms[9]
+            symptom11 = psymptoms[10]
+            symptom12 = psymptoms[11]
+            symptom13 = psymptoms[12]
+            symptom14 = psymptoms[13]
+            symptom15 = psymptoms[14]
+            symptom16 = psymptoms[15]
+            symptom17 = psymptoms[16]
+        elif len(psymptoms) > 17:
+            layout = GridLayout(cols=1, size_hint=(.6, .2), pos_hint={"x": .2, "top": .9}, padding=10)
+            popupLabel = Label(text="Exceeded the quantity of symptoms.")
+            closeButton = Button(text="Close to continue")
+            layout.add_widget(popupLabel)
+            layout.add_widget(closeButton)
+            popup = Popup(title='Symptom Quantity', content=layout)
+            popup.open()
+            closeButton.bind(on_press=popup.dismiss)
 
 
-                url2 = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
-                self.request2 = UrlRequest(url=url2, on_success=self.res, on_failure=self.fail, ca_file=cfi.where(),
-                                           verify=True)
-
-                break
+        url2 = f'https://diseaseapiv3-5.onrender.com/predict?symptom1={symptom1}&symptom2={symptom2}&symptom3={symptom3}&symptom4={symptom4}&symptom5={symptom5}&symptom6={symptom6}&symptom7={symptom7}&symptom8={symptom8}&symptom9={symptom9}&symptom10={symptom10}&symptom11={symptom11}&symptom12={symptom12}&symptom13={symptom13}&symptom14={symptom14}&symptom15={symptom15}&symptom16={symptom16}&symptom17={symptom17}'
+        self.request2 = UrlRequest(url=url2, on_success=self.res, on_failure=self.fail, ca_file=cfi.where(),
+                                   verify=True)
 
         screen_manager.get_screen('content').text_input.text = ""
 
@@ -1012,9 +960,7 @@ class parentApp(App):
         mydb.close()
 
     def fail(self, *args):
-        screen_manager.get_screen('content').chat_list.add_widget(Response(text="Please use the example of symptoms provided at above.",size_hint=(.65, None)))
-
-
+        pass
 
 
 if __name__ == "__main__":

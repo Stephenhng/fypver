@@ -1,3 +1,5 @@
+#FYP Project: A System For Disease Prediction Based On Symptom Using Artificial Intelligence
+#H'ng Sheng Wei 69803
 import random
 import json
 import pickle
@@ -7,12 +9,11 @@ import tensorflow as tf
 
 from nltk.stem import WordNetLemmatizer
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout
+from keras.layers import Dense, Dropout
 from keras.optimizers import SGD
 
-nltk.download('wordnet', download_dir='nltk_data/')
-nltk.download('punkt', download_dir='nltk_data/')
-nltk.data.path.append('nltk_data/')
+nltk.download('wordnet')
+nltk.download('punkt')
 
 lemmatizer = WordNetLemmatizer()
 

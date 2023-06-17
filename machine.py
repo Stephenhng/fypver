@@ -1,3 +1,5 @@
+#FYP Project: A System For Disease Prediction Based On Symptom Using Artificial Intelligence
+#H'ng Sheng Wei 69803
 import pickle
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier

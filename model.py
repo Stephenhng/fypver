@@ -1,3 +1,5 @@
+#FYP Project: A System For Disease Prediction Based On Symptom Using Artificial Intelligence
+#H'ng Sheng Wei 69803
 import numpy as np
 from kivy.utils import platform
 
